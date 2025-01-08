@@ -1,9 +1,11 @@
 <script setup lang="ts">
 
-import { FlexRender, getCoreRowModel, useVueTable, type ColumnDef, getPaginationRowModel } from '@tanstack/vue-table';
+import { FlexRender, getCoreRowModel, useVueTable, type ColumnDef, getPaginationRowModel, getSortedRowModel, type SortingState, getFilteredRowModel } from '@tanstack/vue-table';
 import people from '../mockData.json'
-import { h, ref } from 'vue';
-// import EditButton from './EditButton.vue';
+import { h, onMounted, ref } from 'vue';
+import EditButton from './EditButton.vue';
+import type { UsersResponse } from '../types/users';
+import { getUsers } from '../api/get-users';
 
 interface People {
   id: number;
@@ -15,15 +17,24 @@ interface People {
   created_at: string;
 }
 
+onMounted(
+    getUsers()
+)
+
+
 // Corpo da Tabela utilizando mock
-const data = ref<People[]>(people)
+const data = ref<UsersResponse[]>()
 
 // Colunas da Tabela
-const peopleColumns: ColumnDef<People>[] = [
-    // {
-    //     accessorKey: 'id',
-    //     header: 'Id',
-    // },
+const peopleColumns: ColumnDef<UsersResponse>[] = [
+    {
+        accessorKey: 'id',
+        header: 'Id',
+    },
+    {
+        accessorFn: row => `${row.} ${row.last_name}`,
+        header: 'Full Name'
+    },
     {
         accessorKey: 'first_name',
         header: 'First Name',
@@ -32,10 +43,7 @@ const peopleColumns: ColumnDef<People>[] = [
         accessorKey: 'last_name',
         header: 'Last Name',
     },
-    // {
-    //     accessorFn: row => `${row.first_name} ${row.last_name}`,
-    //     header: 'Full Name'
-    // },
+    
     {
         accessorKey: 'email',
         header: 'Email',
@@ -56,9 +64,12 @@ const peopleColumns: ColumnDef<People>[] = [
     {
         accessorKey: 'edit',
         header: ' ',
-        // cell: ({row}) => h(EditButton,{ id: row.original.id})
+        cell: ({row}) => h(EditButton,{ id: row.original.id})
     },
 ]
+
+const sorting = ref<SortingState>([])
+const filter = ref('')
 
 // Instancia da Tabela
 const table = useVueTable({
@@ -66,29 +77,48 @@ const table = useVueTable({
     data: data.value,
     columns: peopleColumns,
     getCoreRowModel: getCoreRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
-    // initialState: {
-    //     pagination: {
-    //         pageSize: 20
-    //     }
-    // }
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: updateOrValue => {
+        sorting.value = typeof updateOrValue === 'function' ? updateOrValue(sorting.value) : updateOrValue
+    },
+    getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+        pagination: {
+            pageSize: 20
+        }
+    },
+    state: {
+        get sorting(){
+            return sorting.value
+        },
+        get globalFilter() {
+            return filter.value
+        }
+    },
 })
+
 
 </script>
 
 <template>
     <div>
+        <div>
+            <input type="text" v-model="filter" />
+        </div>
         <table>
             <thead>
                 <!-- Grupo de Header -->
                 <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
                     <!-- Header Individualmente -->
-                    <th v-for="header in headerGroup.headers" :key="header.id" scope="col">
+                    <th v-for="header in headerGroup.headers" :key="header.id" scope="col" @click="header.column.getToggleSortingHandler()?.($event)">
                         <!-- 
                             :render="Toda essa coluna será um header"  
                             :props="Pelo header poder ser: string, jsx ou fn ele lida com as 3 opções" 
                          -->
                         <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
+                        {{ {asc: '⬆', desc: '⬇'}[header.column.getIsSorted() as string] }}
+
                     </th>
                 </tr>
             </thead>
@@ -102,7 +132,7 @@ const table = useVueTable({
             </tbody>
         </table>
 
-        <!-- <div>Page {{ table.getState().pagination.pageIndex +1 }} of {{ table.getPageCount() }} - {{ table.getFilteredRowModel().rows.length }} results</div>
+        <div>Page {{ table.getState().pagination.pageIndex +1 }} of {{ table.getPageCount() }} - {{ table.getFilteredRowModel().rows.length }} results</div>
         
         <div>
             <button @click="table.setPageSize(20)">
@@ -130,7 +160,7 @@ const table = useVueTable({
             <button @click="table.setPageIndex(table.getPageCount() - 1)">
                 Last Page
             </button>
-        </div> -->
+        </div>
     </div>
 </template>
 
