@@ -1,40 +1,42 @@
 <script setup lang="ts">
 
 import { FlexRender, getCoreRowModel, useVueTable, type ColumnDef, getPaginationRowModel, getSortedRowModel, type SortingState, getFilteredRowModel } from '@tanstack/vue-table';
-import people from '../mockData.json'
-import { h, onMounted, ref } from 'vue';
+// import people from '../mockData.json'
+import { h, onMounted, ref, type MaybeRef } from 'vue';
 import EditButton from './EditButton.vue';
 import type { UsersResponse } from '../types/users';
 import { getUsers } from '../api/get-users';
+import { useQuery } from '@tanstack/vue-query'
 
-interface People {
-  id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  title: string;
-  role: string;
-  created_at: string;
-}
+// interface People {
+//   id: number;
+//   first_name: string;
+//   last_name: string;
+//   email: string;
+//   title: string;
+//   role: string;
+//   created_at: string;
+// }
 
-onMounted(
-    getUsers()
-)
 
+const userData = useQuery({
+    queryKey: ['users'],
+    queryFn: () => getUsers()
+})
+console.log(userData, 'userData')
 
 // Corpo da Tabela utilizando mock
-const data = ref<UsersResponse[]>()
-
+// const data = ref<UsersResponse[]>()
 // Colunas da Tabela
 const peopleColumns: ColumnDef<UsersResponse>[] = [
     {
         accessorKey: 'id',
         header: 'Id',
     },
-    {
-        accessorFn: row => `${row.} ${row.last_name}`,
-        header: 'Full Name'
-    },
+    // {
+    //     accessorFn: row => `${row.} ${row.last_name}`,
+    //     header: 'Full Name'
+    // },
     {
         accessorKey: 'first_name',
         header: 'First Name',
@@ -48,33 +50,31 @@ const peopleColumns: ColumnDef<UsersResponse>[] = [
         accessorKey: 'email',
         header: 'Email',
     },
-    {
-        accessorKey: 'title',
-        header: 'Title',
-    },
-    {
-        accessorKey: 'role',
-        header: 'Role',
-    },
-    {
-        accessorKey: 'created_at',
-        header: 'Created At',
-        // cell: info => info.getValue() + ' Olár'
-    },
+    // {
+    //     accessorKey: 'title',
+    //     header: 'Title',
+    // },
+    // {
+    //     accessorKey: 'role',
+    //     header: 'Role',
+    // },
+    // {
+    //     accessorKey: 'created_at',
+    //     header: 'Created At',
+    // },
     {
         accessorKey: 'edit',
         header: ' ',
-        cell: ({row}) => h(EditButton,{ id: row.original.id})
+        cell: ({row}) => h(EditButton)
     },
 ]
-
 const sorting = ref<SortingState>([])
 const filter = ref('')
 
 // Instancia da Tabela
 const table = useVueTable({
     // As 3 coisas requeridas
-    data: data.value,
+    data: userData.data,
     columns: peopleColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
