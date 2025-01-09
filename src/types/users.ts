@@ -1,9 +1,6 @@
-export interface UsersResponse {
-  data: {
-    id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    avatar: string;
-  }[]
+export interface Todo {
+    userId: number
+    id: number
+    title: string
+    completed: boolean
 }

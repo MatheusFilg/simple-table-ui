@@ -1,101 +1,63 @@
 <script setup lang="ts">
 
-import { FlexRender, getCoreRowModel, useVueTable, type ColumnDef, getPaginationRowModel, getSortedRowModel, type SortingState, getFilteredRowModel } from '@tanstack/vue-table';
-// import people from '../mockData.json'
-import { h, onMounted, ref, type MaybeRef } from 'vue';
-import EditButton from './EditButton.vue';
-import type { UsersResponse } from '../types/users';
-import { getUsers } from '../api/get-users';
-import { useQuery } from '@tanstack/vue-query'
+import { FlexRender, getCoreRowModel, useVueTable, } from '@tanstack/vue-table';
+import { ref } from 'vue';
+import type { Todo } from '../types/users';
+import { useQuery } from '@tanstack/vue-query';
+import { getTodos } from '../api/get-todo';
 
-// interface People {
-//   id: number;
-//   first_name: string;
-//   last_name: string;
-//   email: string;
-//   title: string;
-//   role: string;
-//   created_at: string;
-// }
+// const todos = ref<Todo[]>([
+//     {
+//         'userId': 1,
+//         'id': 1,
+//         'title': 'Titulo 1',
+//         'completed': false,
+//     },
+//     {
+//         'userId': 1,
+//         'id': 2,
+//         'title': 'Titulo 2',
+//         'completed': true,
+//     },
+// ])
+// const columns: ColumnDef<Todo>[] = []
 
+const todos = ref<Todo[]>([])
 
-const userData = useQuery({
-    queryKey: ['users'],
-    queryFn: () => getUsers()
+const { data } = useQuery({
+    queryKey: ['todos'],
+    queryFn: () => getTodos()
 })
-console.log(userData, 'userData')
 
-// Corpo da Tabela utilizando mock
-// const data = ref<UsersResponse[]>()
-// Colunas da Tabela
-const peopleColumns: ColumnDef<UsersResponse>[] = [
+console.log(data.value, 'value')
+console.log(data, 'aaa')
+
+
+
+
+const columns = [
+    {
+        accessorKey: 'userId',
+        id: 'userId'
+    },
     {
         accessorKey: 'id',
-        header: 'Id',
-    },
-    // {
-    //     accessorFn: row => `${row.} ${row.last_name}`,
-    //     header: 'Full Name'
-    // },
-    {
-        accessorKey: 'first_name',
-        header: 'First Name',
+        id: 'Id'
     },
     {
-        accessorKey: 'last_name',
-        header: 'Last Name',
+        accessorKey: 'title',
+        id: 'Title'
     },
-    
     {
-        accessorKey: 'email',
-        header: 'Email',
-    },
-    // {
-    //     accessorKey: 'title',
-    //     header: 'Title',
-    // },
-    // {
-    //     accessorKey: 'role',
-    //     header: 'Role',
-    // },
-    // {
-    //     accessorKey: 'created_at',
-    //     header: 'Created At',
-    // },
-    {
-        accessorKey: 'edit',
-        header: ' ',
-        cell: ({row}) => h(EditButton)
+        accessorKey: 'completed',
+        id: 'Completed'
     },
 ]
-const sorting = ref<SortingState>([])
-const filter = ref('')
 
-// Instancia da Tabela
 const table = useVueTable({
-    // As 3 coisas requeridas
-    data: userData.data,
-    columns: peopleColumns,
+    data: todos.value,
+    columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: updateOrValue => {
-        sorting.value = typeof updateOrValue === 'function' ? updateOrValue(sorting.value) : updateOrValue
-    },
-    getFilteredRowModel: getFilteredRowModel(),
-    initialState: {
-        pagination: {
-            pageSize: 20
-        }
-    },
-    state: {
-        get sorting(){
-            return sorting.value
-        },
-        get globalFilter() {
-            return filter.value
-        }
-    },
 })
 
 
@@ -103,19 +65,10 @@ const table = useVueTable({
 
 <template>
     <div>
-        <div>
-            <input type="text" v-model="filter" />
-        </div>
         <table>
             <thead>
-                <!-- Grupo de Header -->
                 <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-                    <!-- Header Individualmente -->
                     <th v-for="header in headerGroup.headers" :key="header.id" scope="col" @click="header.column.getToggleSortingHandler()?.($event)">
-                        <!-- 
-                            :render="Toda essa coluna será um header"  
-                            :props="Pelo header poder ser: string, jsx ou fn ele lida com as 3 opções" 
-                         -->
                         <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
                         {{ {asc: '⬆', desc: '⬇'}[header.column.getIsSorted() as string] }}
 
@@ -131,36 +84,5 @@ const table = useVueTable({
                 </tr>
             </tbody>
         </table>
-
-        <div>Page {{ table.getState().pagination.pageIndex +1 }} of {{ table.getPageCount() }} - {{ table.getFilteredRowModel().rows.length }} results</div>
-        
-        <div>
-            <button @click="table.setPageSize(20)">
-                Page Size: 20
-            </button>
-
-            <button @click="table.setPageSize(50)">
-                Page Size: 50
-            </button>
-        </div>
-        
-        <div>
-            <button @click="table.setPageIndex(0)">
-                First Page
-            </button>
-
-            <button @click="table.previousPage()" :disabled="!table.getCanPreviousPage()">
-                Previous Page
-            </button>
-
-            <button @click="table.nextPage()" :disabled="!table.getCanNextPage()">
-                Next Page
-            </button>
-
-            <button @click="table.setPageIndex(table.getPageCount() - 1)">
-                Last Page
-            </button>
-        </div>
     </div>
 </template>
-
