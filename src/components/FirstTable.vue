@@ -1,66 +1,70 @@
 <script setup lang="ts">
 
-import { FlexRender, getCoreRowModel, useVueTable, } from '@tanstack/vue-table';
-import { ref, watchEffect } from 'vue';
-import type { Todo } from '../types/users';
+import { FlexRender, getCoreRowModel, useVueTable, type PaginationState, } from '@tanstack/vue-table';
+import { computed, ref, watchEffect } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
-import { getTodos } from '../api/get-todo';
+import { getUsers } from '../api/get-users';
+import type { User } from '../types/users';
 
-
-
-const todos = ref<Todo[]>([])
-
-const { data:todosData, isLoading } = useQuery({
-    queryKey: ['todos'],
-    queryFn: () => getTodos(),
-    initialData: [],
-    enabled: true,
-    staleTime: 0,          
+const users = ref<User[]>([])
+const pagination = ref<PaginationState>({
+  pageIndex: 0,
+  pageSize: 6,
 })
 
-watchEffect(() => {
-    if(todosData.value) {
-        todos.value = todosData.value
-    }
+const { data: userData } = useQuery({
+    queryKey: ['todos', pagination],
+    queryFn: () => getUsers(pagination.value.pageIndex + 1),
+    staleTime: 5000,
 })
 
-console.log(todosData.value, 'todosData value')
-console.log(todos.value, 'todos value')
-console.log(todosData, 'aaa')
+const pageCount = computed(() => userData.value?.total_pages || 0)
 
 const columns = [
-    {
-        accessorKey: 'userId',
-        id: 'userId'
-    },
     {
         accessorKey: 'id',
         id: 'Id'
     },
     {
-        accessorKey: 'title',
-        id: 'Title'
+        accessorKey: 'first_name',
+        id: 'First Name'
     },
     {
-        accessorKey: 'completed',
-        id: 'Completed'
+        accessorKey: 'last_name',
+        id: 'Last Name'
+    },
+    {
+        accessorKey: 'email',
+        id: 'Email'
     },
 ]
 
 const table = useVueTable({
-    data: todos.value,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
+    get data() {
+    return users.value
+  },
+  columns,
+  getCoreRowModel: getCoreRowModel(),
+  manualPagination: true,
+  pageCount,
+  state: {
+    pagination,
+  },
+  onPaginationChange: (updater) => {
+    pagination.value = updater(pagination.value)
+    refetch()
+  },
 })
 
-
+watchEffect(() => {
+    if(userData.value) {
+        users.value = userData.value.data
+    }
+})
 </script>
 
 <template>
     <div>
-        <div v-if="isLoading">
-            <span>Is loading...</span>
-        </div>
         <table>
             <thead>
                 <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
@@ -80,5 +84,33 @@ const table = useVueTable({
                 </tr>
             </tbody>
         </table>
+        <div>
+            <button
+            @click="table.previousPage()"
+        >
+            First Page
+        </button>
+
+            <button
+                :disabled="!table.getCanPreviousPage()"
+                @click="table.previousPage()"
+            >
+                Previous
+            </button>
+
+            <button
+                @click="table.nextPage()"
+            >
+                Next
+            </button>
+
+            <button
+                :disabled="!table.getCanNextPage()"
+                @click="table.setPageIndex(table.getPageCount() -1)"
+            >
+            Last Page
+            </button>
+
+        </div>
     </div>
 </template>

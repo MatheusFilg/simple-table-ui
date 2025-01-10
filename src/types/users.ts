@@ -1,6 +1,7 @@
-export interface Todo {
-    userId: number
-    id: number
-    title: string
-    completed: boolean
-}
+export interface User {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+    avatar: string;
+  }
