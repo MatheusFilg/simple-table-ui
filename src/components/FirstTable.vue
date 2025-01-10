@@ -1,39 +1,32 @@
 <script setup lang="ts">
 
 import { FlexRender, getCoreRowModel, useVueTable, } from '@tanstack/vue-table';
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import type { Todo } from '../types/users';
 import { useQuery } from '@tanstack/vue-query';
 import { getTodos } from '../api/get-todo';
 
-// const todos = ref<Todo[]>([
-//     {
-//         'userId': 1,
-//         'id': 1,
-//         'title': 'Titulo 1',
-//         'completed': false,
-//     },
-//     {
-//         'userId': 1,
-//         'id': 2,
-//         'title': 'Titulo 2',
-//         'completed': true,
-//     },
-// ])
-// const columns: ColumnDef<Todo>[] = []
+
 
 const todos = ref<Todo[]>([])
 
-const { data } = useQuery({
+const { data:todosData, isLoading } = useQuery({
     queryKey: ['todos'],
-    queryFn: () => getTodos()
+    queryFn: () => getTodos(),
+    initialData: [],
+    enabled: true,
+    staleTime: 0,          
 })
 
-console.log(data.value, 'value')
-console.log(data, 'aaa')
+watchEffect(() => {
+    if(todosData.value) {
+        todos.value = todosData.value
+    }
+})
 
-
-
+console.log(todosData.value, 'todosData value')
+console.log(todos.value, 'todos value')
+console.log(todosData, 'aaa')
 
 const columns = [
     {
@@ -65,6 +58,9 @@ const table = useVueTable({
 
 <template>
     <div>
+        <div v-if="isLoading">
+            <span>Is loading...</span>
+        </div>
         <table>
             <thead>
                 <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
