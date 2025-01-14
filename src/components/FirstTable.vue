@@ -12,13 +12,14 @@ const pagination = ref<PaginationState>({
   pageSize: 6,
 })
 
-const { data: userData } = useQuery({
-    queryKey: ['todos', pagination],
-    queryFn: () => getUsers(pagination.value.pageIndex + 1),
+const { data: userData, refetch } = useQuery({
+    queryKey: ['todos', pagination.value.pageIndex],
+    queryFn: () => getUsers(pagination.value.pageIndex +1),
     staleTime: 5000,
 })
 
 const pageCount = computed(() => userData.value?.total_pages || 0)
+const totalItems = computed(() => userData.value?.total || 0)
 
 const columns = [
     {
@@ -41,20 +42,28 @@ const columns = [
 
 const table = useVueTable({
     get data() {
-    return users.value
+        return users.value
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
   manualPagination: true,
-  pageCount,
+  pageCount: pageCount.value, //poderia ser -1 caso não houvesse a informação de quantas paginas
   state: {
-    pagination,
+    pagination: pagination.value
   },
   onPaginationChange: (updater) => {
-    pagination.value = updater(pagination.value)
-    refetch()
+    if (typeof updater === 'function') {
+      pagination.value = updater(pagination.value)
+    } else {
+      pagination.value = updater
+    }
   },
 })
+
+function handleChangePage(pageIndex: number) {
+    pagination.value.pageIndex = pageIndex
+    refetch()
+}
 
 watchEffect(() => {
     if(userData.value) {
@@ -85,32 +94,36 @@ watchEffect(() => {
             </tbody>
         </table>
         <div>
-            <button
-            @click="table.previousPage()"
-        >
-            First Page
-        </button>
+            <button 
+                :disabled="pagination.pageIndex === 0"
+                @click="handleChangePage(0)"
+            >
+                First Page
+            </button>
 
             <button
-                :disabled="!table.getCanPreviousPage()"
-                @click="table.previousPage()"
+                :disabled="pagination.pageIndex === 0"
+                @click="handleChangePage(pagination.pageIndex - 1)"
             >
                 Previous
             </button>
 
             <button
-                @click="table.nextPage()"
+                :disabled="pagination.pageIndex === pageCount - 1"
+                @click="handleChangePage(pagination.pageIndex +1)"
             >
                 Next
             </button>
 
             <button
-                :disabled="!table.getCanNextPage()"
-                @click="table.setPageIndex(table.getPageCount() -1)"
+                :disabled="pagination.pageIndex === pageCount - 1"
+                @click="handleChangePage(pageCount -1)"
             >
-            Last Page
+                Last Page
             </button>
-
+        </div>
+        <div>
+            Total items: {{ totalItems }}
         </div>
     </div>
 </template>
