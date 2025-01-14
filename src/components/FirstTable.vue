@@ -1,21 +1,18 @@
 <script setup lang="ts">
 
-import { FlexRender, getCoreRowModel, useVueTable, type PaginationState, } from '@tanstack/vue-table';
+import { FlexRender, getCoreRowModel, useVueTable, } from '@tanstack/vue-table';
 import { computed, ref, watchEffect } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { getUsers } from '../api/get-users';
 import type { User } from '../types/users';
 
 const users = ref<User[]>([])
-const pagination = ref<PaginationState>({
-  pageIndex: 0,
-  pageSize: 6,
-})
+const page = ref<number>(1)
 
-const { data: userData, refetch } = useQuery({
-    queryKey: ['todos', pagination.value.pageIndex],
-    queryFn: () => getUsers(pagination.value.pageIndex +1),
-    staleTime: 5000,
+const { data: userData } = useQuery({
+    queryKey: ['todos', page],
+    queryFn: () => getUsers(page),
+    staleTime: 1000 * 60 // 1 minuto
 })
 
 const pageCount = computed(() => userData.value?.total_pages || 0)
@@ -38,7 +35,7 @@ const columns = [
         accessorKey: 'email',
         id: 'Email'
     },
-]
+] // isso daqui pode ser um arquivo dentro de uma pasta utils, definindo coluna caso seja necessário
 
 const table = useVueTable({
     get data() {
@@ -48,21 +45,10 @@ const table = useVueTable({
   getCoreRowModel: getCoreRowModel(),
   manualPagination: true,
   pageCount: pageCount.value, //poderia ser -1 caso não houvesse a informação de quantas paginas
-  state: {
-    pagination: pagination.value
-  },
-  onPaginationChange: (updater) => {
-    if (typeof updater === 'function') {
-      pagination.value = updater(pagination.value)
-    } else {
-      pagination.value = updater
-    }
-  },
 })
 
-function handleChangePage(pageIndex: number) {
-    pagination.value.pageIndex = pageIndex
-    refetch()
+function handleChangePage(currentPage: number) {
+    page.value = currentPage
 }
 
 watchEffect(() => {
@@ -95,35 +81,36 @@ watchEffect(() => {
         </table>
         <div>
             <button 
-                :disabled="pagination.pageIndex === 0"
-                @click="handleChangePage(0)"
+                :disabled="page === 1"
+                @click="handleChangePage(1)"
             >
                 First Page
             </button>
 
             <button
-                :disabled="pagination.pageIndex === 0"
-                @click="handleChangePage(pagination.pageIndex - 1)"
+                :disabled="page === 1"
+                @click="handleChangePage(page - 1)"
             >
                 Previous
             </button>
 
             <button
-                :disabled="pagination.pageIndex === pageCount - 1"
-                @click="handleChangePage(pagination.pageIndex +1)"
+                :disabled="page === pageCount"
+                @click="handleChangePage(page + 1)"
             >
                 Next
             </button>
 
             <button
-                :disabled="pagination.pageIndex === pageCount - 1"
-                @click="handleChangePage(pageCount -1)"
+                :disabled="page === pageCount"
+                @click="handleChangePage(pageCount)"
             >
                 Last Page
             </button>
         </div>
         <div>
             Total items: {{ totalItems }}
+            <p>Current Page: {{ page }} </p>
         </div>
     </div>
 </template>
