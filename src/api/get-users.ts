@@ -12,8 +12,13 @@ export interface UsersResponse {
   
 
 
-export async function getUsers(page: Ref<number>) {
-    const response = await api.get<UsersResponse>(`/users?page=${page.value}`)
+export async function getUsers(page: Ref<number>, sortBy?: string, sortOrder?: string) {
+  let url = `/users?key=f136e380&page=${page.value}`
+
+  if (sortBy && sortOrder) {
+    url += `&sort=${sortBy}&order=${sortOrder}`
+  }
+  const response = await api.get<UsersResponse>(url)
     
-    return response.data
+  return response.data
 }

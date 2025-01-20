@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { FlexRender, getCoreRowModel, useVueTable, } from '@tanstack/vue-table';
+import { FlexRender, createColumnHelper, getCoreRowModel, getSortedRowModel, useVueTable, type SortingState, } from '@tanstack/vue-table';
 import { computed, ref, watchEffect } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { getUsers } from '../api/get-users';
@@ -8,32 +8,47 @@ import type { User } from '../types/users';
 
 const users = ref<User[]>([])
 const page = ref<number>(1)
+const sorting = ref<SortingState>([])
 
 const { data: userData } = useQuery({
-    queryKey: ['todos', page],
-    queryFn: () => getUsers(page),
+    queryKey: ['todos', page, sorting],
+    // queryFn: () => getUsers(page),
+    queryFn: () => {
+    const [sortItem] = sorting.value;
+    return getUsers(
+      page,
+      sortItem?.id,
+      sortItem?.desc ? 'desc' : 'asc'
+    );
+  },
     staleTime: 1000 * 60 // 1 minuto
 })
 
 const pageCount = computed(() => userData.value?.total_pages || 0)
 const totalItems = computed(() => userData.value?.total || 0)
 
+const columnHelper = createColumnHelper<User>()
+
 const columns = [
     {
         accessorKey: 'id',
-        id: 'Id'
+        id: 'id',
     },
-    {
-        accessorKey: 'first_name',
-        id: 'First Name'
-    },
+    columnHelper.accessor('first_name', {
+        id: 'first_name',
+        header: 'First Name'
+    }),
+    // {
+    //     accessorKey: 'first_name',
+    //     id: 'first_name',
+    // },
     {
         accessorKey: 'last_name',
-        id: 'Last Name'
+        id: 'last_name',
     },
     {
         accessorKey: 'email',
-        id: 'Email'
+        id: 'email',
     },
 ] // isso daqui pode ser um arquivo dentro de uma pasta utils, definindo coluna caso seja necessário
 
@@ -45,6 +60,17 @@ const table = useVueTable({
   getCoreRowModel: getCoreRowModel(),
   manualPagination: true,
   pageCount: pageCount.value, //poderia ser -1 caso não houvesse a informação de quantas paginas
+  getSortedRowModel: getSortedRowModel(),
+  manualSorting: true,
+  state: {
+    get sorting() {
+        return sorting.value
+    }
+  },
+  onSortingChange: (updater) => {
+    sorting.value = typeof updater === 'function' ? updater(sorting.value) : updater;
+    page.value = 1; // Reseta a página ao ordenar
+  },
 })
 
 function handleChangePage(currentPage: number) {
