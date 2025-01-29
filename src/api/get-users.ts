@@ -1,17 +1,8 @@
 import type { Ref } from "vue"
 import { api } from "../lib/axios"
 import type { User } from "../types/users"
-
-// export interface UsersResponse {
-//     page: Ref<number>;
-//     per_page: number;
-//     total: number;
-//     total_pages: number;
-//     data: User[]
-//   }
-  
-
-export async function getUsers(page: Ref<number>, sortBy?: string, sortOrder?: string, filters?: Record<string, any>) {
+ 
+export async function getUsers(page: Ref<number>, sortBy?: string, sortOrder?: string, filters?: Record<string, unknown>) {
   let url = `/users?page=${page.value}&limit=10`
 
   if (sortBy && sortOrder) {
@@ -19,9 +10,10 @@ export async function getUsers(page: Ref<number>, sortBy?: string, sortOrder?: s
   }
 
   if (filters) {
-    Object.entries(filters).forEach(([key, value]) => {
-        if (value) url += `&${key}=${value}`
-    });
+    for (const key in filters) {
+      const value = filters[key]
+      if (value) url += `&${key}=${value}`
+    }
 }
 
   const response = await api.get<User[]>(url)

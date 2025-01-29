@@ -1,32 +1,45 @@
 <script setup lang="ts">
-
-import { FlexRender, createColumnHelper, getCoreRowModel, getSortedRowModel, useVueTable, type ColumnFiltersState, type SortingState, } from '@tanstack/vue-table';
-import { ref, watchEffect } from 'vue';
-import { useQuery } from '@tanstack/vue-query';
-import { getUsers } from '../api/get-users';
-import type { User } from '../types/users';
+import {
+  FlexRender,
+  createColumnHelper,
+  getCoreRowModel,
+  useVueTable,
+  type ColumnFiltersState,
+  type SortingState,
+} from '@tanstack/vue-table'
+import { computed, ref, watchEffect } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
+import { getUsers } from '../api/get-users'
+import type { User } from '../types/users'
 
 const users = ref<User[]>([])
 const page = ref<number>(1)
 const sorting = ref<SortingState>([])
 const columnFilters = ref<ColumnFiltersState>([])
 
+const filters = computed(() =>
+  // ação de transformar o array em um objeto com os filtros
+  columnFilters.value.reduce(
+    (accumulator, { id, value }) => {
+      if (value) accumulator[id] = value
+      return accumulator
+    },
+    {} as Record<string, unknown>
+  )
+)
+
 const { data: userData } = useQuery({
-    queryKey: ['todos', page, sorting, columnFilters],
-    queryFn: () => {
+  queryKey: ['todos', page, sorting, filters],
+  queryFn: () => {
     const sortItem = sorting.value[0]
-    const filters = columnFilters.value.reduce((acc, filter) => {
-            acc[filter.id] = filter.value;
-            return acc;
-        }, {} as Record<string, any>)
     return getUsers(
       page,
       sortItem?.id,
       sortItem?.desc ? 'desc' : 'asc',
-      filters
-    );
+      filters.value
+    )
   },
-    staleTime: 1000 * 60 // 1 minuto
+  staleTime: 1000 * 60, // 1 minuto
 })
 
 //Caso a API retorne informações de paginação, é possivel consumir
@@ -36,68 +49,67 @@ const { data: userData } = useQuery({
 const columnHelper = createColumnHelper<User>()
 
 const columns = [
-    {
-        accessorKey: 'id',
-        id: 'id',
-    },
-    columnHelper.accessor('first_name', {
-        id: 'first_name',
-        header: 'First Name',
-        enableColumnFilter: true,
-    }),
-    // {
-    //     accessorKey: 'first_name',
-    //     id: 'first_name',
-    // },
-    {
-        accessorKey: 'last_name',
-        id: 'last_name',
-        enableColumnFilter: true,
-    },
-    {
-        accessorKey: 'email',
-        id: 'email',
-        enableColumnFilter: true,
-    },
+  {
+    accessorKey: 'id',
+    id: 'id',
+    enableColumnFilter: false,
+  },
+  columnHelper.accessor('first_name', {
+    id: 'first_name',
+    header: 'First Name',
+  }),
+  // {
+  //     accessorKey: 'first_name',
+  //     id: 'first_name',
+  // },
+  {
+    accessorKey: 'last_name',
+    id: 'last_name',
+  },
+  {
+    accessorKey: 'email',
+    id: 'email',
+  },
 ] // isso daqui pode ser um arquivo dentro de uma pasta utils, definindo coluna caso seja necessário
 
 const table = useVueTable({
-    get data() {
-        return users.value
+  get data() {
+    return users.value
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
-  manualPagination: true,
   pageCount: 10, //poderia ser -1 caso não houvesse a informação de quantas paginas
-  getSortedRowModel: getSortedRowModel(),
   manualFiltering: true,
+  manualSorting: true,
+  manualPagination: true,
   state: {
     get sorting() {
-        return sorting.value
+      return sorting.value
     },
     get columnFilters() {
-        return columnFilters.value
-    }
+      return columnFilters.value
+    },
   },
-  onSortingChange: (updater) => {
-    sorting.value = typeof updater === 'function' ? updater(sorting.value) : updater
+  onSortingChange: updater => {
+    sorting.value =
+      typeof updater === 'function' ? updater(sorting.value) : updater
     page.value = 1
   },
-  onColumnFiltersChange: (updater) => {
-    columnFilters.value = typeof updater === 'function' ? updater(columnFilters.value) : updater
+  onColumnFiltersChange: updater => {
+    columnFilters.value =
+      typeof updater === 'function' ? updater(columnFilters.value) : updater
     page.value = 1
   },
-//   debugTable: true
 })
 
 function handleChangePage(currentPage: number) {
-    page.value = currentPage
+  page.value = currentPage
 }
 
 watchEffect(() => {
-    if(userData.value) {
-        users.value = userData.value
-    }
+  if (userData.value) {
+    users.value = userData.value
+  }
 })
 </script>
 
