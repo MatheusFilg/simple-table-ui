@@ -1,0 +1,23 @@
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+/* 
+Removendo os estilos predefinidos:
+@import "tailwindcss/preflight.css" layer(base); 
+*/
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --color-zinc-800: oklch(0.274 0.006 286.033);
+  --color-white: oklch(100% 0 0);
+  --font-body: Inter, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-zinc-800);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-weight: font-extralight;
+  }
+}
