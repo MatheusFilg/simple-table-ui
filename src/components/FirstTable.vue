@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   FlexRender,
-  createColumnHelper,
   getCoreRowModel,
   useVueTable,
   type ColumnFiltersState,
@@ -9,14 +8,17 @@ import {
 } from '@tanstack/vue-table'
 import { computed, ref, watchEffect } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
-import { getUsers } from '../api/get-users'
 import type { User } from '../types/users'
+import { columns } from '../utils/columns'
+import { getUsersQueryOptions } from '../queryOptions/get-users'
 
 const users = ref<User[]>([])
-const page = ref<number>(1)
-const sorting = ref<SortingState>([])
-const columnFilters = ref<ColumnFiltersState>([])
 
+const page = ref<number>(1)
+
+const sorting = ref<SortingState>([])
+
+const columnFilters = ref<ColumnFiltersState>([])
 const filters = computed(() =>
   // ação de transformar o array em um objeto com os filtros
   columnFilters.value.reduce(
@@ -28,49 +30,13 @@ const filters = computed(() =>
   )
 )
 
-const { data: userData } = useQuery({
-  queryKey: ['todos', page, sorting, filters],
-  queryFn: () => {
-    const sortItem = sorting.value[0]
-    return getUsers(
-      page,
-      sortItem?.id,
-      sortItem?.desc ? 'desc' : 'asc',
-      filters.value
-    )
-  },
-  staleTime: 1000 * 60, // 1 minuto
-})
+const { data: userData } = useQuery(
+  getUsersQueryOptions(page, sorting, filters)
+)
 
 //Caso a API retorne informações de paginação, é possivel consumir
 // const pageCount = computed(() => userData.value?.total_pages || 0)
 // const totalItems = computed(() => userData.value?.total || 0)
-
-const columnHelper = createColumnHelper<User>()
-
-const columns = [
-  {
-    accessorKey: 'id',
-    id: 'id',
-    enableColumnFilter: false,
-  },
-  columnHelper.accessor('first_name', {
-    id: 'first_name',
-    header: 'First Name',
-  }),
-  // {
-  //     accessorKey: 'first_name',
-  //     id: 'first_name',
-  // },
-  {
-    accessorKey: 'last_name',
-    id: 'last_name',
-  },
-  {
-    accessorKey: 'email',
-    id: 'email',
-  },
-] // isso daqui pode ser um arquivo dentro de uma pasta utils, definindo coluna caso seja necessário
 
 const table = useVueTable({
   get data() {
