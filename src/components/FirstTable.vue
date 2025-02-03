@@ -44,7 +44,7 @@ const table = useVueTable({
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
-  pageCount: 10, //poderia ser -1 caso não houvesse a informação de quantas paginas
+  pageCount: 5, //poderia ser -1 caso não houvesse a informação de quantas paginas
   manualFiltering: true,
   manualSorting: true,
   manualPagination: true,
@@ -80,71 +80,75 @@ watchEffect(() => {
 </script>
 
 <template>
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th v-for="header in table.getFlatHeaders()" 
-                        :key="header.id"
-                        :class="header.column.getCanSort() ? 'cursor-pointer select-none' : '' "
-                        @click="header.column.getToggleSortingHandler()?.($event)"
-                    >
-                        <div>
-                            <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
-                            {{ {asc: '⬆', desc: '⬇'}[header.column.getIsSorted() as string] }}
-                        </div>
-
-                        <div v-if="header.column.getCanFilter()">
-                            <input
-                                type="text"
-                                :value="header.column.getFilterValue() as string"
-                                @input="header.column.setFilterValue(($event.target as HTMLInputElement).value)"
-                                placeholder="Filter..."
-                            />
-                        </div>
-                    </th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr v-for="row in table.getRowModel().rows" :key="row.id">
-                    <td v-for="cell in row.getVisibleCells()" :key="cell.id">
-                        <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div>
-            <button 
-                :disabled="page === 1"
-                @click="handleChangePage(1)"
+    <div class="h-[95dvh] flex flex-col">
+      <table class="self-center gap-2 flex flex-col">
+        <thead>
+          <tr>
+            <th class="text-start" v-for="header in table.getFlatHeaders()" 
+              :key="header.id"
+              :class="header.column.getCanSort() ? 'cursor-pointer select-none' : '' "
+              @click="header.column.getToggleSortingHandler()?.($event)"
             >
-                First Page
-            </button>
+              <div>
+                <FlexRender
+                  :render="header.column.columnDef.header" 
+                  :props="header.getContext()" 
+                />
+                  {{ {asc: '⬆', desc: '⬇'}[header.column.getIsSorted() as string] }}
+              </div>
+              <!-- <div v-if="header.column.getCanFilter()">
+                <input
+                  type="text"
+                  :value="header.column.getFilterValue() as string"
+                  @input="header.column.setFilterValue(($event.target as HTMLInputElement).value)"
+                  placeholder="Filter..."
+                />
+              </div> -->
+            </th>
+          </tr>
+        </thead>
+        
+        <tbody class="flex flex-col">
+          <tr class="gap-10 flex flex-1 " v-for="row in table.getRowModel().rows" :key="row.id">
+            <td class="text-start" v-for="cell in row.getVisibleCells()" :key="cell.id">
+              <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-            <button
-                :disabled="page === 1"
-                @click="handleChangePage(page - 1)"
-            >
-                Previous
-            </button>
+      <div class="mt-1 flex flex-row justify-center">
+        <button 
+          :disabled="page === 1"
+          @click="handleChangePage(1)"
+        >
+          First Page
+        </button>
 
-            <button
-                :disabled="page === 10"
-                @click="handleChangePage(page + 1)"
-            >
-                Next
-            </button>
+        <button
+          :disabled="page === 1"
+          @click="handleChangePage(page - 1)"
+        >
+          Previous
+        </button>
 
-            <button
-                :disabled="page === 10"
-                @click="handleChangePage(10)"
-            >
-                Last Page
-            </button>
-        </div>
-        <div>
-            <p>Current Page: {{ page }} </p>
-        </div>
+        <button
+          :disabled="page === 5"
+          @click="handleChangePage(page + 1)"
+        >
+          Next
+        </button>
+
+        <button
+          :disabled="page === 5"
+          @click="handleChangePage(5)"
+        >
+          Last Page
+        </button>
+      </div>
+
+      <div>
+        <p>Current Page: {{ page }} </p>
+      </div>
     </div>
 </template>
