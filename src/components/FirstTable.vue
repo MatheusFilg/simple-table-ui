@@ -81,37 +81,73 @@ watchEffect(() => {
 
 <template>
     <div class="h-[95dvh] flex flex-col">
-      <table class="self-center gap-2 flex flex-col">
+      <div class="flex flex-row gap-2 px-4 py-2">
+        <input
+          type="text"
+          :value="table.getColumn('id')?.getFilterValue() as string"
+          @input="table.getColumn('id')?.setFilterValue(($event.target as HTMLInputElement).value)"
+          placeholder="Filtrar por ID"
+        />
+        <input
+          type="text"
+          :value="table.getColumn('first_name')?.getFilterValue() as string"
+          @input="table.getColumn('first_name')?.setFilterValue(($event.target as HTMLInputElement).value)"
+          placeholder="Filtrar pelo Nome"
+        />
+        <input
+          type="text"
+          :value="table.getColumn('last_name')?.getFilterValue() as string"
+          @input="table.getColumn('last_name')?.setFilterValue(($event.target as HTMLInputElement).value)"
+          placeholder="Filtrar pelo Sobrenome"
+        />
+        <input
+          type="text"
+          :value="table.getColumn('email')?.getFilterValue() as string"
+          @input="table.getColumn('email')?.setFilterValue(($event.target as HTMLInputElement).value)"
+          placeholder="Filtrar por Email"
+        />
+      </div>
+      
+      <table class="self-center gap-2 flex flex-col w-">
         <thead>
           <tr>
-            <th class="text-start" v-for="header in table.getFlatHeaders()" 
+            <th 
+              v-for="header in table.getFlatHeaders()"
               :key="header.id"
-              :class="header.column.getCanSort() ? 'cursor-pointer select-none' : '' "
+              :style="`width: ${header.getSize()}px`"
               @click="header.column.getToggleSortingHandler()?.($event)"
             >
-              <div>
+              <div class="flex flex-row items-center gap-1 cursor-pointer text-xl">
                 <FlexRender
                   :render="header.column.columnDef.header" 
                   :props="header.getContext()" 
                 />
+                <span >
                   {{ {asc: '⬆', desc: '⬇'}[header.column.getIsSorted() as string] }}
+                </span>
               </div>
               <!-- <div v-if="header.column.getCanFilter()">
-                <input
-                  type="text"
-                  :value="header.column.getFilterValue() as string"
-                  @input="header.column.setFilterValue(($event.target as HTMLInputElement).value)"
-                  placeholder="Filter..."
-                />
+            
               </div> -->
             </th>
           </tr>
         </thead>
         
-        <tbody class="flex flex-col">
-          <tr class="gap-10 flex flex-1 " v-for="row in table.getRowModel().rows" :key="row.id">
-            <td class="text-start" v-for="cell in row.getVisibleCells()" :key="cell.id">
-              <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+        <tbody>
+          <tr 
+            v-for="row in table.getRowModel().rows" 
+            :key="row.id"
+          >
+            <td 
+              class="text-lg"
+              v-for="cell in row.getVisibleCells()"
+              :key="cell.id"
+            >
+              <FlexRender 
+                :style="`width: ${cell.column.getSize()}px`"
+                :render="cell.column.columnDef.cell"
+                :props="cell.getContext()" 
+              />
             </td>
           </tr>
         </tbody>
@@ -133,6 +169,7 @@ watchEffect(() => {
         </button>
 
         <button
+          class="bg-red-400 p-2 rounded-sm border-0"
           :disabled="page === 5"
           @click="handleChangePage(page + 1)"
         >
