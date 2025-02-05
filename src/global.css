@@ -1,4 +1,5 @@
 @layer theme, base, utilities;
+@plugin "autoprefixer";
 
 @import "tailwindcss/theme.css" layer(theme);
 /* 
@@ -7,6 +8,73 @@ Removendo os estilos predefinidos:
 */
 @import "tailwindcss/utilities.css" layer(utilities);
 
-@theme {
+.light {
+--background: oklch(96.5% 0.096 180.8);
+--foreground: oklch(0% 0 0);
+--card: oklch(90.5% 0.096 180.8);
+--card-foreground: oklch(15.5% 0.018 180.8);
+--popover: oklch(96.5% 0.096 180.8);
+--popover-foreground: oklch(0% 0 0);
+--primary: oklch(40.5% 0.154 180.8);
+--primary-foreground: oklch(100% 0 0);
+--secondary: oklch(75.5% 0.096 180.8);
+--secondary-foreground: oklch(0% 0 0);
+--muted: oklch(87.5% 0.056 132.1);
+--muted-foreground: oklch(40.2% 0.018 180.8);
+--accent: oklch(85.5% 0.096 132.1);
+--accent-foreground: oklch(15.5% 0.018 180.8);
+--destructive: oklch(35.6% 0.208 25.7);
+--destructive-foreground: oklch(90.5% 0.018 180.8);
+--border: oklch(55.5% 0.096 180.8);
+--input: oklch(25.6% 0.056 180.8);
+--ring: oklch(40.5% 0.154 180.8);
+--radius: 0.5rem;
+}
+
+.dark {
+--background: oklch(10.2% 0.038 180.8);
+--foreground: oklch(90.5% 0.018 180.8);
+--card: oklch(0% 0 0);
+--card-foreground: oklch(90.5% 0.018 180.8);
+--popover: oklch(10.2% 0.038 180.8);
+--popover-foreground: oklch(90.5% 0.018 180.8);
+--primary: oklch(40.5% 0.154 180.8);
+--primary-foreground: oklch(100% 0 0);
+--secondary: oklch(18.5% 0.046 180.8);
+--secondary-foreground: oklch(100% 0 0);
+--muted: oklch(22.3% 0.056 132.1);
+--muted-foreground: oklch(60.2% 0.018 180.8);
+--accent: oklch(22.3% 0.056 132.1);
+--accent-foreground: oklch(90.5% 0.018 180.8);
+--destructive: oklch(35.6% 0.208 25.7);
+--destructive-foreground: oklch(90.5% 0.018 180.8);
+--border: oklch(25.6% 0.056 180.8);
+--input: oklch(25.6% 0.056 180.8);
+--ring: oklch(40.5% 0.154 180.8);
+}
+
+@theme color {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@theme font {
   --font-body: Inter, sans-serif;
 }

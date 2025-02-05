@@ -10,6 +10,7 @@ import { computed, ref, watchEffect } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import type { User } from '../types/users'
 import { columns } from '../utils/columns'
+import { Button } from './ui/button'
 import { getUsersQueryOptions } from '../queryOptions/get-users'
 
 const users = ref<User[]>([])
@@ -153,35 +154,42 @@ watchEffect(() => {
         </tbody>
       </table>
 
-      <div class="mt-1 flex flex-row justify-center">
-        <button 
+      <div class="mt-1 flex gap-2 flex-row justify-center">
+        <Button
+          variant="outline"
+          class="border-1 duration-250 cursor-pointer"
           :disabled="page === 1"
           @click="handleChangePage(1)"
         >
           First Page
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="outline"
+          class="border-1 duration-250 cursor-pointer"
           :disabled="page === 1"
           @click="handleChangePage(page - 1)"
         >
           Previous
-        </button>
+        </Button>
 
-        <button
-          class="bg-red-400 p-2 rounded-sm border-0"
+        <Button
+          variant="outline"
+          class="border-1 duration-250 cursor-pointer"
           :disabled="page === 5"
           @click="handleChangePage(page + 1)"
         >
           Next
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="outline"
+          class="border-1 duration-250 cursor-pointer"
           :disabled="page === 5"
           @click="handleChangePage(5)"
         >
           Last Page
-        </button>
+        </Button>
       </div>
 
       <div>
