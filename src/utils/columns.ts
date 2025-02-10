@@ -11,7 +11,8 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) =>
       h('div', { class: 'text-start' }, h('span', {}, row.getValue('id'))),
     enableColumnFilter: false,
-    size: 32,
+    enableSorting:false,
+    size: 64,
   },
   {
     accessorKey: 'first_name',
@@ -22,7 +23,7 @@ export const columns: ColumnDef<User>[] = [
         { class: 'text-start' },
         h('span', {}, row.getValue('first_name'))
       ),
-    size: 120,
+    size: 164,
   },
   {
     accessorKey: 'last_name',
@@ -33,7 +34,7 @@ export const columns: ColumnDef<User>[] = [
         { class: 'text-start' },
         h('span', {}, row.getValue('last_name'))
       ),
-    size: 120,
+    size: 164,
   },
   {
     accessorKey: 'email',

@@ -9,48 +9,48 @@ Removendo os estilos predefinidos:
 @import "tailwindcss/utilities.css" layer(utilities);
 
 .light {
---background: oklch(96.5% 0.096 180.8);
---foreground: oklch(0% 0 0);
---card: oklch(90.5% 0.096 180.8);
---card-foreground: oklch(15.5% 0.018 180.8);
---popover: oklch(96.5% 0.096 180.8);
---popover-foreground: oklch(0% 0 0);
---primary: oklch(40.5% 0.154 180.8);
---primary-foreground: oklch(100% 0 0);
---secondary: oklch(75.5% 0.096 180.8);
---secondary-foreground: oklch(0% 0 0);
---muted: oklch(87.5% 0.056 132.1);
---muted-foreground: oklch(40.2% 0.018 180.8);
---accent: oklch(85.5% 0.096 132.1);
---accent-foreground: oklch(15.5% 0.018 180.8);
---destructive: oklch(35.6% 0.208 25.7);
---destructive-foreground: oklch(90.5% 0.018 180.8);
---border: oklch(55.5% 0.096 180.8);
---input: oklch(25.6% 0.056 180.8);
---ring: oklch(40.5% 0.154 180.8);
---radius: 0.5rem;
+  --background: oklch(100% 0 0);
+  --foreground: oklch(3% 0 0);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(3% 0 0);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(3% 0 0);
+  --primary: oklch(60% 0.2 29.2);
+  --primary-foreground: oklch(97% 0 0);
+  --secondary: oklch(96% 0 0);
+  --secondary-foreground: oklch(9% 0 0);
+  --muted: oklch(96% 0 0);
+  --muted-foreground: oklch(45% 0 0);
+  --accent: oklch(96% 0 0);
+  --accent-foreground: oklch(9% 0 0);
+  --destructive: oklch(60% 0.2 29.2);
+  --destructive-foreground: oklch(98% 0 0);
+  --border: oklch(90% 0 0);
+  --input: oklch(90% 0 0);
+  --ring: oklch(60% 0.2 29.2);
+  --radius: 0.5rem;
 }
 
 .dark {
---background: oklch(10.2% 0.038 180.8);
---foreground: oklch(90.5% 0.018 180.8);
---card: oklch(0% 0 0);
---card-foreground: oklch(90.5% 0.018 180.8);
---popover: oklch(10.2% 0.038 180.8);
---popover-foreground: oklch(90.5% 0.018 180.8);
---primary: oklch(40.5% 0.154 180.8);
---primary-foreground: oklch(100% 0 0);
---secondary: oklch(18.5% 0.046 180.8);
---secondary-foreground: oklch(100% 0 0);
---muted: oklch(22.3% 0.056 132.1);
---muted-foreground: oklch(60.2% 0.018 180.8);
---accent: oklch(22.3% 0.056 132.1);
---accent-foreground: oklch(90.5% 0.018 180.8);
---destructive: oklch(35.6% 0.208 25.7);
---destructive-foreground: oklch(90.5% 0.018 180.8);
---border: oklch(25.6% 0.056 180.8);
---input: oklch(25.6% 0.056 180.8);
---ring: oklch(40.5% 0.154 180.8);
+  --background: oklch(3% 0 0);
+  --foreground: oklch(98% 0 0);
+  --card: oklch(3% 0 0);
+  --card-foreground: oklch(98% 0 0);
+  --popover: oklch(3% 0 0);
+  --popover-foreground: oklch(98% 0 0);
+  --primary: oklch(60% 0.2 29.2);
+  --primary-foreground: oklch(97% 0 0);
+  --secondary: oklch(15% 0 0);
+  --secondary-foreground: oklch(98% 0 0);
+  --muted: oklch(15% 0 0);
+  --muted-foreground: oklch(64% 0 0);
+  --accent: oklch(15% 0 0);
+  --accent-foreground: oklch(98% 0 0);
+  --destructive: oklch(60% 0.2 29.2);
+  --destructive-foreground: oklch(98% 0 0);
+  --border: oklch(15% 0 0);
+  --input: oklch(15% 0 0);
+  --ring: oklch(60% 0.2 29.2);
 }
 
 @theme color {
