@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Button } from '../../@/components/ui/button'
 import { page } from '../utils/table'
+import Button from './ui/button/Button.vue';
 
 function handleChangePage(currentPage: number) {
   page.value = currentPage

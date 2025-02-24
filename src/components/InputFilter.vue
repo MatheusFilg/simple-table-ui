@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Input } from '../../@/components/ui/input'
 import { table } from '../utils/table'
+import Input from './ui/input/Input.vue';
 
 const props = defineProps<{
   accessorKey: string

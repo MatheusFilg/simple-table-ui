@@ -4,13 +4,13 @@ import { watchEffect } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 import { table, page, filters, sorting, users } from '../utils/table'
 import { getUsersQueryOptions } from '../queryOptions/get-users'
-import { Button } from '../../@/components/ui/button'
 import { ArrowUpNarrowWide, Filter, ArrowDownWideNarrow } from 'lucide-vue-next'
 import InputFilter from './InputFilter.vue'
 import Pagination from './Pagination.vue'
-import DropdownMenu from '../../@/components/ui/dropdown-menu/DropdownMenu.vue'
-import DropdownMenuTrigger from '../../@/components/ui/dropdown-menu/DropdownMenuTrigger.vue'
-import DropdownMenuContent from '../../@/components/ui/dropdown-menu/DropdownMenuContent.vue'
+import Button from './ui/button/Button.vue'
+import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue'
+import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue'
+import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
 
 //Caso a API retorne informações de paginação, é possivel consumir
 // const pageCount = computed(() => userData.value?.total_pages || 0)
