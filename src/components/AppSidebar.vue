@@ -2,16 +2,29 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
-  SidebarGroup,
   SidebarFooter,
-} from '@/components/ui/sidebar'
+  SidebarGroup,
+  SidebarHeader,
+} from '@/components/ui/sidebar';
 
-import { table } from '../utils/table'
+import { table } from '../utils/table';
 
-import InputFilter from './InputFilter.vue'
+import InputFilter from './InputFilter.vue';
 
-import { FlexRender } from '@tanstack/vue-table'
+import { FlexRender } from '@tanstack/vue-table';
+import { ref, watchEffect } from 'vue';
+
+const input = ref<InstanceType<typeof InputFilter> | null>(null)
+
+watchEffect(() => {
+  if(input.value) {
+      console.log(input.value, 'AQUII')
+      input.value.focus()
+  } else{
+    console.log('error')
+  }
+})
+
 </script>
 
 <template>
@@ -29,11 +42,12 @@ import { FlexRender } from '@tanstack/vue-table'
             v-if="header.column.getCanFilter()"
           />
 
-          <InputFilter 
-            class="w-full"
+          <InputFilter
+            ref="input"
+            class="w-full focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
             v-if="header.column.getCanFilter()"
             :accessorKey="header.column.id" 
-            :placeholder="`Filtrar por... ${header.column.columnDef.id}`"  
+            placeholder="Filtrar por..."  
           />
     </div>
       </SidebarGroup>

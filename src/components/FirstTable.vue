@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { FlexRender } from '@tanstack/vue-table'
-import { watchEffect } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
-import { table, page, filters, sorting, users } from '../utils/table'
+import { FlexRender } from '@tanstack/vue-table'
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, Filter } from 'lucide-vue-next'
+import { watchEffect } from 'vue'
 import { getUsersQueryOptions } from '../queryOptions/get-users'
-import { ArrowUpNarrowWide, Filter, ArrowDownWideNarrow } from 'lucide-vue-next'
+import { filters, page, sorting, table, users } from '../utils/table'
 import Pagination from './Pagination.vue'
 import Button from './ui/button/Button.vue'
 import { useSidebar } from './ui/sidebar'
@@ -76,8 +76,6 @@ function handleFilter() {
                 :render="cell.column.columnDef.cell"
                 :props="cell.getContext()" 
               />
-
-              {{ console.log(cell.getContext) }}
             </td>
           </tr>
         </tbody>
