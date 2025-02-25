@@ -5,12 +5,9 @@ import { useQuery } from '@tanstack/vue-query'
 import { table, page, filters, sorting, users } from '../utils/table'
 import { getUsersQueryOptions } from '../queryOptions/get-users'
 import { ArrowUpNarrowWide, Filter, ArrowDownWideNarrow } from 'lucide-vue-next'
-import InputFilter from './InputFilter.vue'
 import Pagination from './Pagination.vue'
 import Button from './ui/button/Button.vue'
-import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue'
-import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue'
-import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
+import { useSidebar } from './ui/sidebar'
 
 //Caso a API retorne informações de paginação, é possivel consumir
 // const pageCount = computed(() => userData.value?.total_pages || 0)
@@ -24,6 +21,12 @@ watchEffect(() => {
     users.value = userData.value
   }
 })
+
+const { toggleSidebar } = useSidebar()
+
+function handleFilter() {
+  toggleSidebar()
+}
 </script>
 
 <template>
@@ -50,16 +53,9 @@ watchEffect(() => {
                   <ArrowDownWideNarrow v-if="header.column.getIsSorted() === 'desc'"/>
                 </div>
 
-                <DropdownMenu v-if="header.column.getCanFilter()">
-                  <DropdownMenuTrigger as-child>
-                    <Button size="icon" variant="outline">
-                      <Filter class="h-2 w-2" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                      <InputFilter class="w-full" :accessorKey="header.column.id" placeholder="Filtrar por..." />
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button size="icon" variant="outline" @click="handleFilter"  v-if="header.column.getCanFilter()">
+                  <Filter class="h-2 w-2" />
+                </Button>
               </div>
             </th>
           </tr>
@@ -80,6 +76,8 @@ watchEffect(() => {
                 :render="cell.column.columnDef.cell"
                 :props="cell.getContext()" 
               />
+
+              {{ console.log(cell.getContext) }}
             </td>
           </tr>
         </tbody>

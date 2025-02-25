@@ -4,18 +4,17 @@ import ThemeToggle from './components/ThemeToggle.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import SidebarProvider from './components/ui/sidebar/SidebarProvider.vue'
 import SidebarTrigger from './components/ui/sidebar/SidebarTrigger.vue'
-
 </script>
 
 <template>
-    <SidebarProvider>
+    <SidebarProvider :default-open="false">
         <AppSidebar />
-        <main>
-            <SidebarTrigger />
-            <div class="flex flex-col gap-4">
+        <main class="flex flex-col gap-4 p-4 w-screen">
+            <div class="flex flex-row gap-2 items-center">
+                <SidebarTrigger />
                 <ThemeToggle />
-                <FirstTable />
             </div>
+            <FirstTable />
         </main>
     </SidebarProvider>
 </template>
