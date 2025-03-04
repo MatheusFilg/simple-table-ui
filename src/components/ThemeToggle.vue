@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { useColorMode } from '@vueuse/core'
-import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue';
-import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue';
-import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue';
-import DropdownMenuItem from './ui/dropdown-menu/DropdownMenuItem.vue';
-import Button from './ui/button/Button.vue';
+import DropdownMenuTrigger from './ui/dropdown-menu/DropdownMenuTrigger.vue'
+import DropdownMenu from './ui/dropdown-menu/DropdownMenu.vue'
+import DropdownMenuContent from './ui/dropdown-menu/DropdownMenuContent.vue'
+import DropdownMenuItem from './ui/dropdown-menu/DropdownMenuItem.vue'
+import Button from './ui/button/Button.vue'
 
 // Pass { disableTransition: false } to enable transitions
-const mode = useColorMode({disableTransition : false})
+const mode = useColorMode({ disableTransition: false })
 </script>
 
 <template>

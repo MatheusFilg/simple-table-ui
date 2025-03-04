@@ -44,7 +44,6 @@ export const table = useVueTable({
   onSortingChange: updater => {
     sorting.value =
       typeof updater === 'function' ? updater(sorting.value) : updater
-    console.log(sorting.value, 'aqui')
     page.value = 1
   },
   onColumnFiltersChange: updater => {

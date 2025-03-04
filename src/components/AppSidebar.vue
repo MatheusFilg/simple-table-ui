@@ -5,26 +5,27 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
-} from '@/components/ui/sidebar';
+} from '@/components/ui/sidebar'
 
-import { table } from '../utils/table';
+import { table } from '../utils/table'
 
-import InputFilter from './InputFilter.vue';
+import InputFilter from './InputFilter.vue'
 
-import { FlexRender } from '@tanstack/vue-table';
-import { ref, watchEffect } from 'vue';
+import { FlexRender } from '@tanstack/vue-table'
+import { watchEffect, nextTick } from 'vue'
 
-const input = ref<InstanceType<typeof InputFilter> | null>(null)
+const props = defineProps<{
+  isSidebarOpen: boolean
+  activeFilterHeaderId?: string | null
+}>()
 
-watchEffect(() => {
-  if(input.value) {
-      console.log(input.value, 'AQUII')
-      input.value.focus()
-  } else{
-    console.log('error')
+watchEffect(async () => {
+  if (props.isSidebarOpen && props.activeFilterHeaderId) {
+    await nextTick()
+    const inputId = `${props.activeFilterHeaderId}`
+    document.getElementById(inputId)?.focus()
   }
 })
-
 </script>
 
 <template>
@@ -43,7 +44,8 @@ watchEffect(() => {
           />
 
           <InputFilter
-            ref="input"
+            :id="header.column.id"
+            ref="inputRef"
             class="w-full focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
             v-if="header.column.getCanFilter()"
             :accessorKey="header.column.id" 

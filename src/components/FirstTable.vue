@@ -2,12 +2,13 @@
 import { useQuery } from '@tanstack/vue-query'
 import { FlexRender } from '@tanstack/vue-table'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, Filter } from 'lucide-vue-next'
-import { watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { getUsersQueryOptions } from '../queryOptions/get-users'
 import { filters, page, sorting, table, users } from '../utils/table'
 import Pagination from './Pagination.vue'
 import Button from './ui/button/Button.vue'
 import { useSidebar } from './ui/sidebar'
+import AppSidebar from './AppSidebar.vue'
 
 //Caso a API retorne informações de paginação, é possivel consumir
 // const pageCount = computed(() => userData.value?.total_pages || 0)
@@ -22,10 +23,18 @@ watchEffect(() => {
   }
 })
 
-const { toggleSidebar } = useSidebar()
+const sidebarStatus = ref<boolean>(false)
+const activeFilterHeaderId = ref<string | null>(null)
 
-function handleFilter() {
-  toggleSidebar()
+const { toggleSidebar, state } = useSidebar()
+
+function handleFilter(columnId: string) {
+  activeFilterHeaderId.value = columnId
+
+  if (state.value === 'collapsed' || state.value === 'expanded') {
+    toggleSidebar()
+  }
+  sidebarStatus.value = state.value === 'expanded'
 }
 </script>
 
@@ -53,7 +62,12 @@ function handleFilter() {
                   <ArrowDownWideNarrow v-if="header.column.getIsSorted() === 'desc'"/>
                 </div>
 
-                <Button size="icon" variant="outline" @click="handleFilter"  v-if="header.column.getCanFilter()">
+                <Button 
+                  v-if="header.column.getCanFilter()"
+                  @click="handleFilter(header.column.id)"  
+                  variant="outline" 
+                  size="icon" 
+                >
                   <Filter class="h-2 w-2" />
                 </Button>
               </div>
@@ -87,4 +101,8 @@ function handleFilter() {
         <p>Current Page: {{ page }} </p>
       </div>
     </div>
+    <AppSidebar 
+      :isSidebarOpen="sidebarStatus" 
+      :activeFilterHeaderId="activeFilterHeaderId" 
+    />
 </template>
