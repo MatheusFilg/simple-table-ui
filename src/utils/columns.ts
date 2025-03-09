@@ -1,6 +1,7 @@
 import type { ColumnDef } from '@tanstack/vue-table'
 import { h } from 'vue'
 import type { User } from '../types/users'
+import DialogTeste from '@/components/ComponenteDialog.vue'
 
 // const columnHelper = createColumnHelper<User>()
 
@@ -41,6 +42,14 @@ export const columns: ColumnDef<User>[] = [
     header: () => h('div', { class: 'text-start' }, 'Email'),
     cell: ({ row }) =>
       h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
-    size: 240,
+    size: 304,
+  },
+  {
+    accessorKey: 'modal',
+    header: () => h('div', { class: 'text-start' }, 'Modal'),
+    cell: () => h('div', { class: 'text-start' }, h(DialogTeste)),
+    size: 80,
+    enableColumnFilter: false,
+    enableSorting: false,
   },
 ]

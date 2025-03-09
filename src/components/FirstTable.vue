@@ -48,7 +48,7 @@ function handleFilter(columnId: string) {
               :key="header.id"
               :style="`width: ${header.getSize()}px`"
             >
-              <div class="flex flex-row items-center gap-1 text-lg">
+              <div class="flex flex-row items-center text-lg">
                 <div
                   class="flex flex-row items-center gap-1"
                   :class="`${header.column.getCanSort() ? 'cursor-pointer' : 'cursor-default'}`"
@@ -77,11 +77,11 @@ function handleFilter(columnId: string) {
         
         <tbody>
           <tr 
+            class="text-lg"
             v-for="row in table.getRowModel().rows" 
             :key="row.id"
           >
             <td 
-              class="text-lg"
               v-for="cell in row.getVisibleCells()"
               :key="cell.id"
             >
