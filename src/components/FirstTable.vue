@@ -39,68 +39,74 @@ function handleFilter(columnId: string) {
 </script>
 
 <template>
-    <div class="h-[90dvh] flex flex-col">    
-      <table class="self-center gap-2 flex flex-col w-">
-        <thead>
-          <tr>
-            <th 
-              v-for="header in table.getFlatHeaders()"
-              :key="header.id"
-              :style="`width: ${header.getSize()}px`"
-            >
-              <div class="flex flex-row items-center text-lg">
-                <div
-                  class="flex flex-row items-center gap-1"
-                  :class="`${header.column.getCanSort() ? 'cursor-pointer' : 'cursor-default'}`"
-                  @click="header.column.getToggleSortingHandler()?.($event)"
-                >
-                  <FlexRender
-                    :render="header.column.columnDef.header" 
-                    :props="header.getContext()"
-                  />
-                  <ArrowUpNarrowWide v-if="header.column.getIsSorted() === 'asc'"/>
-                  <ArrowDownWideNarrow v-if="header.column.getIsSorted() === 'desc'"/>
+      <div class="w-full overflow-auto border rounded">
+        <table class="w-full relative overflow-auto">
+          <thead class="[&_tr]:border-b">
+            <tr class="border-b">
+              <th 
+                v-for="header in table.getFlatHeaders()"
+                :key="header.id"
+                :style="`width: ${header.getSize()}px`"
+                class="h-10 px-2 text-base"
+                colspan=1
+              >
+                <div class="flex flex-row items-center gap-1">
+                  <div
+                    class="flex flex-row items-center gap-1 py-1.5 px-1 rounded-lg"
+                    :class="`${header.column.getCanSort() ? 'cursor-pointer hover:bg-accent' : 'cursor-default'}`"
+                    @click="header.column.getToggleSortingHandler()?.($event)"
+                  >
+                    <FlexRender
+                      :render="header.column.columnDef.header" 
+                      :props="header.getContext()"
+                    />
+                    <ArrowUpNarrowWide v-if="header.column.getIsSorted() === 'asc'"/>
+                    <ArrowDownWideNarrow v-if="header.column.getIsSorted() === 'desc'"/>
+                  </div>
+  
+                  <Button 
+                    v-if="header.column.getCanFilter()"
+                    @click="handleFilter(header.column.id)"  
+                    variant="outline"
+                    class="h-7 w-7 p-1.5"
+                  >
+                    <Filter :size="20" />
+                  </Button>
                 </div>
-
-                <Button 
-                  v-if="header.column.getCanFilter()"
-                  @click="handleFilter(header.column.id)"  
-                  variant="outline" 
-                  size="icon" 
-                >
-                  <Filter class="h-2 w-2" />
-                </Button>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        
-        <tbody>
-          <tr 
-            class="text-lg"
-            v-for="row in table.getRowModel().rows" 
-            :key="row.id"
-          >
-            <td 
-              v-for="cell in row.getVisibleCells()"
-              :key="cell.id"
+              </th>
+            </tr>
+          </thead>
+          
+          <tbody class="[&_tr:last-child]:border-0">
+            <tr 
+              class="text-sm font-medium border-b transition-colors hover:bg-muted/50"
+              v-for="row in table.getRowModel().rows" 
+              :key="row.id"
             >
-              <FlexRender 
-                :style="`width: ${cell.column.getSize()}px`"
-                :render="cell.column.columnDef.cell"
-                :props="cell.getContext()" 
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <Pagination/>
-
-      <div>
-        <p>Current Page: {{ page }} </p>
+              <td 
+                v-for="cell in row.getVisibleCells()"
+                :key="cell.id"
+                class="px-2 py-1"
+              >
+                <FlexRender 
+                  :style="`width: ${cell.column.getSize()}px`"
+                  :render="cell.column.columnDef.cell"
+                  :props="cell.getContext()" 
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
+
+      <div class="flex justify-center">
+        <div class="flex items-center justify-between w-full">
+          <div>
+            <p>Current Page: {{ page }} </p>
+          </div>
+          <Pagination/>
+        </div>
+      </div>
     <AppSidebar 
       :isSidebarOpen="sidebarStatus" 
       :activeFilterHeaderId="activeFilterHeaderId" 

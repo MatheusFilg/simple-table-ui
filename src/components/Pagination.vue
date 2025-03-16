@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { page } from '../utils/table'
-import Button from './ui/button/Button.vue';
+import Button from './ui/button/Button.vue'
 
 function handleChangePage(currentPage: number) {
   page.value = currentPage
@@ -12,7 +12,7 @@ function handleChangePage(currentPage: number) {
     <div class="mt-1 flex gap-2 flex-row justify-center">
         <Button
           variant="outline"
-          class="border-1 duration-250 cursor-pointer"
+          class="duration-250 cursor-pointer"
           :disabled="page === 1"
           @click="handleChangePage(1)"
         >
@@ -21,7 +21,7 @@ function handleChangePage(currentPage: number) {
 
         <Button
           variant="outline"
-          class="border-1 duration-250 cursor-pointer"
+          class="duration-250 cursor-pointer"
           :disabled="page === 1"
           @click="handleChangePage(page - 1)"
         >
@@ -30,7 +30,7 @@ function handleChangePage(currentPage: number) {
 
         <Button
           variant="outline"
-          class="border-1 duration-250 cursor-pointer"
+          class="duration-250 cursor-pointer"
           :disabled="page === 5"
           @click="handleChangePage(page + 1)"
         >
@@ -39,7 +39,7 @@ function handleChangePage(currentPage: number) {
 
         <Button
           variant="outline"
-          class="border-1 duration-250 cursor-pointer"
+          class="duration-250 cursor-pointer"
           :disabled="page === 5"
           @click="handleChangePage(5)"
         >
