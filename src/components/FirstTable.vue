@@ -5,10 +5,11 @@ import { ArrowDownWideNarrow, ArrowUpNarrowWide, Filter } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
 import { getUsersQueryOptions } from '../queryOptions/get-users'
 import { filters, page, sorting, table, users } from '../utils/table'
+import AppSidebar from './AppSidebar.vue'
 import Pagination from './Pagination.vue'
 import Button from './ui/button/Button.vue'
 import { useSidebar } from './ui/sidebar'
-import AppSidebar from './AppSidebar.vue'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 
 //Caso a API retorne informações de paginação, é possivel consumir
 // const pageCount = computed(() => userData.value?.total_pages || 0)
@@ -20,6 +21,7 @@ const { data: userData } = useQuery(
 watchEffect(() => {
   if (userData.value) {
     users.value = userData.value
+    // total_itens.value = userData.value.total_itens
   }
 })
 
@@ -40,10 +42,10 @@ function handleFilter(columnId: string) {
 
 <template>
       <div class="w-full overflow-auto border rounded">
-        <table class="w-full relative overflow-auto">
-          <thead class="[&_tr]:border-b">
-            <tr class="border-b">
-              <th 
+        <Table class="w-full relative overflow-auto">
+          <TableHeader class="[&_tr]:border-b">
+            <TableRow class="border-b">
+              <TableHead 
                 v-for="header in table.getFlatHeaders()"
                 :key="header.id"
                 :style="`width: ${header.getSize()}px`"
@@ -73,17 +75,17 @@ function handleFilter(columnId: string) {
                     <Filter :size="20" />
                   </Button>
                 </div>
-              </th>
-            </tr>
-          </thead>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
           
-          <tbody class="[&_tr:last-child]:border-0">
-            <tr 
+          <TableBody class="[&_tr:last-child]:border-0">
+            <TableRow 
               class="text-sm font-medium border-b transition-colors hover:bg-muted/50"
               v-for="row in table.getRowModel().rows" 
               :key="row.id"
             >
-              <td 
+              <TableCell 
                 v-for="cell in row.getVisibleCells()"
                 :key="cell.id"
                 class="px-2 py-1"
@@ -93,10 +95,10 @@ function handleFilter(columnId: string) {
                   :render="cell.column.columnDef.cell"
                   :props="cell.getContext()" 
                 />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
 
       <div class="flex justify-center">

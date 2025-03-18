@@ -1,7 +1,7 @@
+import DialogTeste from '@/components/ComponenteDialog.vue'
 import type { ColumnDef } from '@tanstack/vue-table'
 import { h } from 'vue'
 import type { User } from '../types/users'
-import DialogTeste from '@/components/ComponenteDialog.vue'
 
 // const columnHelper = createColumnHelper<User>()
 
@@ -33,7 +33,7 @@ export const columns: ColumnDef<User>[] = [
         { class: 'text-start' },
         h('span', {}, row.getValue('first_name'))
       ),
-    size: 128,
+    size: 160,
   },
   {
     accessorKey: 'last_name',
@@ -44,7 +44,7 @@ export const columns: ColumnDef<User>[] = [
         { class: 'text-start' },
         h('span', {}, row.getValue('last_name'))
       ),
-    size: 128,
+    size: 160,
   },
   {
     accessorKey: 'email',

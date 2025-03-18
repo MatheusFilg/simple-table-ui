@@ -11,6 +11,7 @@ import { columns } from './columns'
 export const users = ref<User[]>([])
 export const page = ref<number>(1)
 export const sorting = ref<SortingState>([])
+// export const total_itens = ref<number>(1)
 const columnFilters = ref<ColumnFiltersState>([])
 export const filters = computed(() =>
   // ação de transformar o array em um objeto com os filtros
@@ -29,7 +30,7 @@ export const table = useVueTable({
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
-  pageCount: 5, //poderia ser -1 caso não houvesse a informação de quantas paginas
+  pageCount: -1, //poderia ser -1 caso não houvesse a informação de quantas paginas
   manualFiltering: true,
   manualSorting: true,
   manualPagination: true,

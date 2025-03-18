@@ -23,5 +23,6 @@ export async function getUsers(
 
   const response = await api.get<User[]>(url)
 
+  // trocar pra apenas response quando for testar o back do POFS
   return response.data
 }

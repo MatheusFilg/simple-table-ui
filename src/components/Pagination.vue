@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { page } from '../utils/table'
-import Button from './ui/button/Button.vue'
+import { page, table } from '../utils/table';
+import Button from './ui/button/Button.vue';
 
 function handleChangePage(currentPage: number) {
   page.value = currentPage
 }
 </script>
 
-
+<!-- trazer o total itens do table e utilizar no disabled -->
 <template>
     <div class="mt-1 flex gap-2 flex-row justify-center">
         <Button
@@ -31,7 +31,7 @@ function handleChangePage(currentPage: number) {
         <Button
           variant="outline"
           class="duration-250 cursor-pointer"
-          :disabled="page === 5"
+          :disabled="!table.getCanNextPage()"
           @click="handleChangePage(page + 1)"
         >
           Next

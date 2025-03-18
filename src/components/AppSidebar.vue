@@ -11,8 +11,10 @@ import { table } from '../utils/table'
 
 import InputFilter from './InputFilter.vue'
 
+import type { User } from '@/types/users'
 import { FlexRender } from '@tanstack/vue-table'
-import { watchEffect, nextTick } from 'vue'
+import { computed, nextTick, watchEffect } from 'vue'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 const props = defineProps<{
   isSidebarOpen: boolean
@@ -26,6 +28,16 @@ watchEffect(async () => {
     document.getElementById(inputId)?.focus()
   }
 })
+function getUniqueValueColumn(columnName: keyof User) {
+  return computed(() => {
+    const columnId = columnName
+    const values = table.getRowModel().rows.map((row) => row.getValue(columnId) as string)
+
+    return [... new Set(values)]
+  })
+}
+
+const uniqueNamesValue = getUniqueValueColumn('first_name')
 </script>
 
 <template>
@@ -51,9 +63,25 @@ watchEffect(async () => {
             :accessorKey="header.column.id" 
             placeholder="Filtrar por..."  
           />
-    </div>
+        </div>
       </SidebarGroup>
-        <span>grupo 2</span>
+
+      <SidebarGroup>
+        <Select multiple>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a Name" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <!-- <SelectLabel>First Name</SelectLabel> -->
+              <SelectItem v-for="names in  uniqueNamesValue" :value="names" :key="names">
+                {{  names }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </SidebarGroup>
+      
     </SidebarContent>
 
     <SidebarFooter >
