@@ -34,6 +34,10 @@ export const columns: ColumnDef<User>[] = [
         h('span', {}, row.getValue('first_name'))
       ),
     size: 160,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue?.length) return true
+      return filterValue.includes(row.getValue(columnId))
+    },
   },
   {
     accessorKey: 'last_name',
@@ -60,13 +64,13 @@ export const columns: ColumnDef<User>[] = [
       h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
     size: 192,
   },
-  {
-    accessorKey: 'email',
-    header: () => h('div', { class: 'text-start' }, 'Email'),
-    cell: ({ row }) =>
-      h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
-    size: 192,
-  },
+  // {
+  //   accessorKey: 'email',
+  //   header: () => h('div', { class: 'text-start' }, 'Email'),
+  //   cell: ({ row }) =>
+  //     h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
+  //   size: 192,
+  // },
   {
     accessorKey: 'email',
     header: () => h('div', { class: 'text-start' }, 'Email'),

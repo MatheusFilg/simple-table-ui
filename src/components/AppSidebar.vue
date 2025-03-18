@@ -11,10 +11,14 @@ import { table } from '../utils/table'
 
 import InputFilter from './InputFilter.vue'
 
-import type { User } from '@/types/users'
 import { FlexRender } from '@tanstack/vue-table'
-import { computed, nextTick, watchEffect } from 'vue'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import { nextTick, watchEffect } from 'vue'
+import SelectFilter from './SelectFilter.vue'
+
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { z } from 'zod'
+import { Button } from './ui/button'
 
 const props = defineProps<{
   isSidebarOpen: boolean
@@ -28,16 +32,23 @@ watchEffect(async () => {
     document.getElementById(inputId)?.focus()
   }
 })
-function getUniqueValueColumn(columnName: keyof User) {
-  return computed(() => {
-    const columnId = columnName
-    const values = table.getRowModel().rows.map((row) => row.getValue(columnId) as string)
 
-    return [... new Set(values)]
+const formSchema = toTypedSchema(
+  z.object({
+    username: z.string().min(2).max(50).array(),
   })
-}
+)
 
-const uniqueNamesValue = getUniqueValueColumn('first_name')
+const { handleSubmit } = useForm({
+  validationSchema: formSchema,
+})
+
+const onSubmit = handleSubmit(values => {
+  // console.log(values.username[0])
+  table
+    .getColumn('first_name')
+    ?.setFilterValue(`${values.username[0]}&${values.username[1]}`)
+})
 </script>
 
 <template>
@@ -67,19 +78,15 @@ const uniqueNamesValue = getUniqueValueColumn('first_name')
       </SidebarGroup>
 
       <SidebarGroup>
-        <Select multiple>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a Name" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <!-- <SelectLabel>First Name</SelectLabel> -->
-              <SelectItem v-for="names in  uniqueNamesValue" :value="names" :key="names">
-                {{  names }}
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <form class="w-2/3 space-y-6" @submit="onSubmit">
+          
+          <SelectFilter />
+
+          <Button type="submit">
+            Submit
+          </Button>
+        </form>
+        
       </SidebarGroup>
       
     </SidebarContent>
