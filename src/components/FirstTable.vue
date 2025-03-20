@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
 import { FlexRender } from '@tanstack/vue-table'
+import { useQuery as useGraphqlQuery } from '@vue/apollo-composable'
+import gql from 'graphql-tag'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, Filter } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
 import { getUsersQueryOptions } from '../queryOptions/get-users'
@@ -38,6 +40,21 @@ function handleFilter(columnId: string) {
   }
   sidebarStatus.value = state.value === 'expanded'
 }
+
+
+const { result } = useGraphqlQuery(gql`
+  query getUsers {
+  userTableSingle {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+`)
+
+console.log(result)
+
 </script>
 
 <template>
