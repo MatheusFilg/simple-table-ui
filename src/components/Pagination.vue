@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { page, table } from '../utils/table';
+import { page } from '../utils/table';
 import Button from './ui/button/Button.vue';
 
 function handleChangePage(currentPage: number) {
   page.value = currentPage
+  console.log(page.value, 'valor da pagina atualizando')
 }
 </script>
 
@@ -13,8 +14,8 @@ function handleChangePage(currentPage: number) {
         <Button
           variant="outline"
           class="duration-250 cursor-pointer"
-          :disabled="page === 1"
-          @click="handleChangePage(1)"
+          :disabled="page === 0"
+          @click="handleChangePage(0)"
         >
           First Page
         </Button>
@@ -22,7 +23,7 @@ function handleChangePage(currentPage: number) {
         <Button
           variant="outline"
           class="duration-250 cursor-pointer"
-          :disabled="page === 1"
+          :disabled="page === 0"
           @click="handleChangePage(page - 1)"
         >
           Previous
@@ -31,7 +32,7 @@ function handleChangePage(currentPage: number) {
         <Button
           variant="outline"
           class="duration-250 cursor-pointer"
-          :disabled="!table.getCanNextPage()"
+          :disabled="page === 4"
           @click="handleChangePage(page + 1)"
         >
           Next
@@ -40,8 +41,8 @@ function handleChangePage(currentPage: number) {
         <Button
           variant="outline"
           class="duration-250 cursor-pointer"
-          :disabled="page === 5"
-          @click="handleChangePage(5)"
+          :disabled="page === 4"
+          @click="handleChangePage(4)"
         >
           Last Page
         </Button>

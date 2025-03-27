@@ -1,0 +1,249 @@
+input InnerOrder {
+  direction: OrderDirection!
+
+  """Priority of current field"""
+  priority: Int!
+}
+
+type Mutation {
+  deleteFromUserTable(where: UserTableFilters): [UserTableItem!]!
+  insertIntoUserTable(values: [UserTableInsertInput!]!): [UserTableItem!]!
+  insertIntoUserTableSingle(values: UserTableInsertInput!): UserTableItem
+  updateUserTable(set: UserTableUpdateInput!, where: UserTableFilters): [UserTableItem!]!
+}
+
+"""Order by direction"""
+enum OrderDirection {
+  """Ascending order"""
+  asc
+
+  """Descending order"""
+  desc
+}
+
+type Query {
+  userTable(limit: Int, offset: Int, orderBy: UserTableOrderBy, where: UserTableFilters): [UserTableSelectItem!]!
+  userTableSingle(offset: Int, orderBy: UserTableOrderBy, where: UserTableFilters): UserTableSelectItem
+}
+
+input UserTableEmailFilters {
+  OR: [UserTableEmailfiltersOr!]
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableEmailfiltersOr {
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableFilters {
+  OR: [UserTableFiltersOr!]
+  email: UserTableEmailFilters
+  firstName: UserTableFirstNameFilters
+  id: UserTableIdFilters
+  lastName: UserTableLastNameFilters
+}
+
+input UserTableFiltersOr {
+  email: UserTableEmailFilters
+  firstName: UserTableFirstNameFilters
+  id: UserTableIdFilters
+  lastName: UserTableLastNameFilters
+}
+
+input UserTableFirstNameFilters {
+  OR: [UserTableFirstNamefiltersOr!]
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableFirstNamefiltersOr {
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableIdFilters {
+  OR: [UserTableIdfiltersOr!]
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableIdfiltersOr {
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableInsertInput {
+  email: String!
+  firstName: String!
+  id: String
+  lastName: String!
+}
+
+type UserTableItem {
+  email: String!
+  firstName: String!
+  id: String!
+  lastName: String!
+}
+
+input UserTableLastNameFilters {
+  OR: [UserTableLastNamefiltersOr!]
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableLastNamefiltersOr {
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableOrderBy {
+  email: InnerOrder
+  firstName: InnerOrder
+  id: InnerOrder
+  lastName: InnerOrder
+}
+
+type UserTableSelectItem {
+  email: String!
+  firstName: String!
+  id: String!
+  lastName: String!
+}
+
+input UserTableUpdateInput {
+  email: String
+  firstName: String
+  id: String
+  lastName: String
+}

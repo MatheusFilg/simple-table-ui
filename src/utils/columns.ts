@@ -10,28 +10,23 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: 'id',
     header: () => h('div', { class: 'text-start' }, 'Id'),
     cell: ({ row }) =>
-      h('div', { class: 'text-start' }, h('span', {}, row.getValue('id'))),
+      h(
+        'div',
+        { class: 'text-start text-ellipsis overflow-hidden' },
+        h('span', {}, row.getValue('id'))
+      ),
     enableColumnFilter: false,
     enableSorting: false,
     size: 48,
   },
   {
-    accessorKey: 'id',
-    header: () => h('div', { class: 'text-start' }, 'Id'),
-    cell: ({ row }) =>
-      h('div', { class: 'text-start' }, h('span', {}, row.getValue('id'))),
-    enableColumnFilter: false,
-    enableSorting: false,
-    size: 48,
-  },
-  {
-    accessorKey: 'first_name',
+    accessorKey: 'firstName',
     header: () => h('div', { class: 'text-start' }, 'First Name'),
     cell: ({ row }) =>
       h(
         'div',
         { class: 'text-start' },
-        h('span', {}, row.getValue('first_name'))
+        h('span', {}, row.getValue('firstName'))
       ),
     size: 160,
     filterFn: (row, columnId, filterValue) => {
@@ -40,50 +35,15 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'last_name',
+    accessorKey: 'lastName',
     header: () => h('div', { class: 'text-start' }, 'Last Name'),
     cell: ({ row }) =>
       h(
         'div',
         { class: 'text-start' },
-        h('span', {}, row.getValue('last_name'))
+        h('span', {}, row.getValue('lastName'))
       ),
     size: 160,
-  },
-  {
-    accessorKey: 'email',
-    header: () => h('div', { class: 'text-start' }, 'Email'),
-    cell: ({ row }) =>
-      h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
-    size: 192,
-  },
-  {
-    accessorKey: 'email',
-    header: () => h('div', { class: 'text-start' }, 'Email'),
-    cell: ({ row }) =>
-      h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
-    size: 192,
-  },
-  // {
-  //   accessorKey: 'email',
-  //   header: () => h('div', { class: 'text-start' }, 'Email'),
-  //   cell: ({ row }) =>
-  //     h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
-  //   size: 192,
-  // },
-  {
-    accessorKey: 'email',
-    header: () => h('div', { class: 'text-start' }, 'Email'),
-    cell: ({ row }) =>
-      h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
-    size: 192,
-  },
-  {
-    accessorKey: 'email',
-    header: () => h('div', { class: 'text-start' }, 'Email'),
-    cell: ({ row }) =>
-      h('div', { class: 'text-start' }, h('span', {}, row.getValue('email'))),
-    size: 192,
   },
   {
     accessorKey: 'email',

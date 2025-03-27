@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import { queryAllUsers } from '@/graphql/queries/user/getAllUsers'
+import type { User } from '@/types/users'
 import { FlexRender } from '@tanstack/vue-table'
-import { useQuery as useGraphqlQuery } from '@vue/apollo-composable'
-import gql from 'graphql-tag'
+import { useQuery } from '@vue/apollo-composable'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, Filter } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
-import { getUsersQueryOptions } from '../queryOptions/get-users'
 import { filters, page, sorting, table, users } from '../utils/table'
 import AppSidebar from './AppSidebar.vue'
 import Pagination from './Pagination.vue'
@@ -13,17 +12,24 @@ import Button from './ui/button/Button.vue'
 import { useSidebar } from './ui/sidebar'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
 
-//Caso a API retorne informações de paginação, é possivel consumir
-// const pageCount = computed(() => userData.value?.total_pages || 0)
-// const totalItems = computed(() => userData.value?.total || 0)
-const { data: userData } = useQuery(
-  getUsersQueryOptions(page, sorting, filters)
+const { result, error } = useQuery<{userTable: User[]}>(
+  queryAllUsers, 
+  () => ({
+    // a medida que a página vai passando eu vou dando skip de acordo com a quantidade do limit
+    offset: page.value * 20,
+    limit: 20,
+    orderBy: sorting.value.reduce((acc, sort, idx)=> {
+      acc[sort.id] = { direction: sort.desc ? 'desc' : 'asc', priority: idx + 1 }
+      return acc
+    }, {} as Record<string, {direction : 'asc' | 'desc', priority: number}>),
+    where: filters.value,
+  }),
+  // {fetchPolicy: 'network-only'}
 )
 
 watchEffect(() => {
-  if (userData.value) {
-    users.value = userData.value
-    // total_itens.value = userData.value.total_itens
+  if (result.value) {
+    users.value = result.value.userTable
   }
 })
 
@@ -41,24 +47,11 @@ function handleFilter(columnId: string) {
   sidebarStatus.value = state.value === 'expanded'
 }
 
-
-const { result } = useGraphqlQuery(gql`
-  query getUsers {
-  userTableSingle {
-    id
-    firstName
-    lastName
-    email
-  }
-}
-`)
-
-console.log(result)
-
 </script>
 
 <template>
       <div class="w-full overflow-auto border rounded">
+        <div v-if="error" class="text-red-500">Erro: {{ error.message }}</div>
         <Table class="w-full relative overflow-auto">
           <TableHeader class="[&_tr]:border-b">
             <TableRow class="border-b">
@@ -121,7 +114,7 @@ console.log(result)
       <div class="flex justify-center">
         <div class="flex items-center justify-between w-full">
           <div>
-            <p>Current Page: {{ page }} </p>
+            <p>Current Page: {{ page + 1 }} </p>
           </div>
           <Pagination/>
         </div>
