@@ -2,20 +2,16 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
   schema: 'http://localhost:4000',
-  documents: ['src/**/*.vue', 'src/**/*.ts'],
+  documents: ['src/graphql/queries/**/*.ts', 'src/**/*.vue'],
   ignoreNoDocuments: true, // for better experience with the watcher
   generates: {
     './src/gql/': {
-      preset: 'client',
+      preset: 'client-preset',
       config: {
         useTypeImports: true,
-        dedupeOperationSuffix: true,
-        pureMagicComment: true,
+        strict: true,
         vueApolloComposable: true,
       },
-    },
-    './src/gql/schema.graphql': {
-      plugins: ['schema-ast'],
     },
   },
 }
