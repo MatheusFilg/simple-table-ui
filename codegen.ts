@@ -14,6 +14,13 @@ const config: CodegenConfig = {
         vueApolloComposable: true,
       },
     },
+    './src/gql/schema.gql': {
+      // Arquivo de schema gerado
+      plugins: ['schema-ast'], // Plugin para gerar schema.graphql
+      config: {
+        includeDirectives: true, // Inclui diretivas se necessário
+      },
+    },
   },
 }
 

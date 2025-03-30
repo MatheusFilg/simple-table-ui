@@ -19,7 +19,7 @@ export const filters = computed(() =>
     (accumulator, { id, value }) => {
       // adequando como é repassado para a query \/
       if (value) accumulator[id] = { ilike: `%${value}%` }
-      console.log()
+      // console.log(value, 'aaaa')
       return accumulator
     },
     {} as Record<string, unknown>

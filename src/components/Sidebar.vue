@@ -34,6 +34,7 @@ watchEffect(async () => {
 })
 
 const formSchema = toTypedSchema(
+  // deixar sem .array pq o back ainda não aceita argumentos novos
   z.object({
     username: z.string().min(2).max(50).array(),
   })
@@ -44,9 +45,10 @@ const { handleSubmit } = useForm({
 })
 
 const onSubmit = handleSubmit(values => {
-  table
-    .getColumn('first_name')
-    ?.setFilterValue(`${values.username[0]}&${values.username[1]}`)
+  console.log(values.username, 'valores aqui')
+  // ver uma maneira de passar multiplos valores
+  // argumento customizavel na query onde aceita list e passaria toda a list para esse argumento
+  table.getColumn('firstName')?.setFilterValue(`${values.username}`)
 })
 </script>
 
