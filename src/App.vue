@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import FirstTable from './components/FirstTable.vue'
-import Header from './components/Header.vue'
+import Header from './components/HeaderSlot.vue'
 import SidebarProvider from './components/ui/sidebar/SidebarProvider.vue'
+import Financeiro from './pages/Financeiro.vue'
 </script>
 
 <template>
@@ -11,7 +11,7 @@ import SidebarProvider from './components/ui/sidebar/SidebarProvider.vue'
             <Header/>
             <main class="flex-1 max-h-full flex-grow">
                 <section class="grid items-center p-8 gap-2">
-                    <FirstTable />
+                    <Financeiro/>
                 </section>
             </main>
         </div>

@@ -2,8 +2,9 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
   schema: 'http://localhost:4000',
-  documents: ['src/graphql/queries/**/*.ts', 'src/**/*.vue'],
-  ignoreNoDocuments: true, // for better experience with the watcher
+  /* nao está verificando arquivos .vue, 
+  idealmente é para as querys ficarem nessa pasta \/ */
+  documents: ['src/graphql/queries/**/*.ts'],
   generates: {
     './src/gql/': {
       preset: 'client-preset',

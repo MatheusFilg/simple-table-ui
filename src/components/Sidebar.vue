@@ -44,7 +44,6 @@ const { handleSubmit } = useForm({
 })
 
 const onSubmit = handleSubmit(values => {
-  // console.log(values.username[0])
   table
     .getColumn('first_name')
     ?.setFilterValue(`${values.username[0]}&${values.username[1]}`)
@@ -52,47 +51,43 @@ const onSubmit = handleSubmit(values => {
 </script>
 
 <template>
-  <Sidebar>
-    <SidebarHeader>
-      <h1>Filtros</h1>
-    </SidebarHeader>
-    
-    <SidebarContent>
-      <SidebarGroup class="flex gap-4">
-        <div v-for="header in table.getFlatHeaders()">
-          <FlexRender 
-            :render="header.column.columnDef.header" 
-            :props="header.getContext()"
-            v-if="header.column.getCanFilter()"
-          />
-
-          <InputFilter
-            :id="header.column.id"
-            ref="inputRef"
-            class="w-full focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-            v-if="header.column.getCanFilter()"
-            :accessorKey="header.column.id" 
-            placeholder="Filtrar por..."  
-          />
-        </div>
-      </SidebarGroup>
-
-      <SidebarGroup>
-        <form class="w-2/3 space-y-6" @submit="onSubmit">
-          
-          <SelectFilter />
-
-          <Button type="submit">
-            Submit
-          </Button>
-        </form>
-        
-      </SidebarGroup>
+  <Sidebar variant="floating" side="right">
+      <SidebarHeader>
+        <h1>Filtros</h1>
+      </SidebarHeader>
       
-    </SidebarContent>
+      <SidebarContent>
+        <SidebarGroup class="flex gap-4">
+          <div v-for="header in table.getFlatHeaders()">
+            <FlexRender 
+              :render="header.column.columnDef.header" 
+              :props="header.getContext()"
+              v-if="header.column.getCanFilter()"
+            />
 
-    <SidebarFooter >
-      <span>footer</span>
-    </SidebarFooter>
+            <InputFilter
+              :id="header.column.id"
+              ref="inputRef"
+              class="w-full focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              v-if="header.column.getCanFilter()"
+              :accessorKey="header.column.id" 
+              placeholder="Filtrar por..."  
+            />
+          </div>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <form class="w-2/3 space-y-6" @submit="onSubmit">
+            <SelectFilter />
+            <Button type="submit">
+              Submit
+            </Button>
+          </form>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter >
+        <span>footer</span>
+      </SidebarFooter>
   </Sidebar>
 </template>

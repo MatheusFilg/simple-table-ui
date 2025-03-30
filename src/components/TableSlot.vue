@@ -4,26 +4,41 @@ import type { User } from '@/types/users'
 import { FlexRender } from '@tanstack/vue-table'
 import { useQuery } from '@vue/apollo-composable'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, Filter } from 'lucide-vue-next'
-import { ref, watchEffect } from 'vue'
+import { watchEffect } from 'vue'
 import { filters, page, sorting, table, users } from '../utils/table'
-import AppSidebar from './AppSidebar.vue'
 import Pagination from './Pagination.vue'
 import Button from './ui/button/Button.vue'
-import { useSidebar } from './ui/sidebar'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './ui/table'
 
-const { result, error } = useQuery<{userTable: User[]}>(
-  queryAllUsers, 
+const props = defineProps<{
+  filterFunction: (header: string) => void
+}>()
+
+const { result, error } = useQuery<{ userTable: User[] }>(
+  queryAllUsers,
   () => ({
     // a medida que a página vai passando eu vou dando skip de acordo com a quantidade do limit
     offset: page.value * 20,
     limit: 20,
-    orderBy: sorting.value.reduce((acc, sort, idx)=> {
-      acc[sort.id] = { direction: sort.desc ? 'desc' : 'asc', priority: idx + 1 }
-      return acc
-    }, {} as Record<string, {direction : 'asc' | 'desc', priority: number}>),
+    orderBy: sorting.value.reduce(
+      (acc, sort, idx) => {
+        acc[sort.id] = {
+          direction: sort.desc ? 'desc' : 'asc',
+          priority: idx + 1,
+        }
+        return acc
+      },
+      {} as Record<string, { direction: 'asc' | 'desc'; priority: number }>
+    ),
     where: filters.value,
-  }),
+  })
   // {fetchPolicy: 'network-only'}
 )
 
@@ -32,21 +47,6 @@ watchEffect(() => {
     users.value = result.value.userTable
   }
 })
-
-const sidebarStatus = ref<boolean>(false)
-const activeFilterHeaderId = ref<string | null>(null)
-
-const { toggleSidebar, state } = useSidebar()
-
-function handleFilter(columnId: string) {
-  activeFilterHeaderId.value = columnId
-
-  if (state.value === 'collapsed' || state.value === 'expanded') {
-    toggleSidebar()
-  }
-  sidebarStatus.value = state.value === 'expanded'
-}
-
 </script>
 
 <template>
@@ -78,7 +78,7 @@ function handleFilter(columnId: string) {
   
                   <Button 
                     v-if="header.column.getCanFilter()"
-                    @click="handleFilter(header.column.id)"  
+                    @click="props.filterFunction(header.column.id)"  
                     variant="outline"
                     class="h-7 w-7 p-1.5"
                   >
@@ -113,14 +113,8 @@ function handleFilter(columnId: string) {
 
       <div class="flex justify-center">
         <div class="flex items-center justify-between w-full">
-          <div>
-            <p>Current Page: {{ page + 1 }} </p>
-          </div>
+          <p>Current Page: {{ page + 1 }} </p>
           <Pagination/>
         </div>
       </div>
-    <AppSidebar 
-      :isSidebarOpen="sidebarStatus" 
-      :activeFilterHeaderId="activeFilterHeaderId" 
-    />
 </template>
