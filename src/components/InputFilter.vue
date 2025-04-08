@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { table } from '../utils/table'
-import Input from './ui/input/Input.vue'
+import { ref } from 'vue';
+import { table } from '../utils/table';
+import Input from './ui/input/Input.vue';
 
 const props = defineProps<{
   accessorKey: string
@@ -10,7 +10,6 @@ const props = defineProps<{
 const inputRef = ref<HTMLInputElement | null>(null)
 
 defineExpose({
-  // focus: () => inputRef.value?.focus()
   inputRef,
 })
 </script>

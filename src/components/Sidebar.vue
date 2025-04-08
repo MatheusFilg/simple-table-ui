@@ -9,14 +9,11 @@ import {
 
 import { table } from '../utils/table'
 
-import InputFilter from './InputFilter.vue'
-
-import { FlexRender } from '@tanstack/vue-table'
 import { nextTick, watchEffect } from 'vue'
 import SelectFilter from './SelectFilter.vue'
 
-import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
+import { useForm } from 'vee-validate'
 import { z } from 'zod'
 import { Button } from './ui/button'
 
@@ -27,6 +24,7 @@ const props = defineProps<{
 
 watchEffect(async () => {
   if (props.isSidebarOpen && props.activeFilterHeaderId) {
+    // \/ assegurando que a dom vai estar atualizada
     await nextTick()
     const inputId = `${props.activeFilterHeaderId}`
     document.getElementById(inputId)?.focus()
@@ -34,9 +32,9 @@ watchEffect(async () => {
 })
 
 const formSchema = toTypedSchema(
-  // deixar sem .array pq o back ainda não aceita argumentos novos
   z.object({
-    username: z.string().min(2).max(50).array(),
+    firstName: z.string().array().optional(),
+    lastName: z.string().array().optional(),
   })
 )
 
@@ -45,10 +43,13 @@ const { handleSubmit } = useForm({
 })
 
 const onSubmit = handleSubmit(values => {
-  console.log(values.username, 'valores aqui')
-  // ver uma maneira de passar multiplos valores
-  // argumento customizavel na query onde aceita list e passaria toda a list para esse argumento
-  table.getColumn('firstName')?.setFilterValue(`${values.username}`)
+  // ver uma maneira de verificar aqui qual filtro ta sendo feito e enviar
+  if (values.firstName) {
+    table.getColumn('firstName')?.setFilterValue(`${values.firstName}`)
+  }
+  if (values.lastName) {
+    table.getColumn('lastName')?.setFilterValue(`${values.lastName}`)
+  }
 })
 </script>
 
@@ -59,28 +60,11 @@ const onSubmit = handleSubmit(values => {
       </SidebarHeader>
       
       <SidebarContent>
-        <SidebarGroup class="flex gap-4">
-          <div v-for="header in table.getFlatHeaders()">
-            <FlexRender 
-              :render="header.column.columnDef.header" 
-              :props="header.getContext()"
-              v-if="header.column.getCanFilter()"
-            />
-
-            <InputFilter
-              :id="header.column.id"
-              ref="inputRef"
-              class="w-full focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-              v-if="header.column.getCanFilter()"
-              :accessorKey="header.column.id" 
-              placeholder="Filtrar por..."  
-            />
-          </div>
-        </SidebarGroup>
-
         <SidebarGroup>
           <form class="w-2/3 space-y-6" @submit="onSubmit">
-            <SelectFilter />
+              <SelectFilter filterId="firstName" />
+              <SelectFilter filterId="lastName" />
+              <SelectFilter filterId="email" />
             <Button type="submit">
               Submit
             </Button>

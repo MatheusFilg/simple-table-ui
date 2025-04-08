@@ -38,8 +38,8 @@ const { result, error } = useQuery<{ userTable: User[] }>(
       {} as Record<string, { direction: 'asc' | 'desc'; priority: number }>
     ),
     where: filters.value,
-  })
-  // {fetchPolicy: 'network-only'}
+  }),
+  {fetchPolicy: 'cache-first'}
 )
 
 watchEffect(() => {

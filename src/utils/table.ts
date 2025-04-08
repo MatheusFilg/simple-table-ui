@@ -18,8 +18,14 @@ export const filters = computed(() =>
   columnFilters.value.reduce(
     (accumulator, { id, value }) => {
       // adequando como é repassado para a query \/
-      if (value) accumulator[id] = { ilike: `%${value}%` }
-      // console.log(value, 'aaaa')
+      if (value) {
+        const valuesArray =
+          typeof value === 'string' && value.includes(',')
+            ? value.split(',').map(v => v.trim())
+            : [value]
+
+        accumulator[id] = { inArray: valuesArray }
+      }
       return accumulator
     },
     {} as Record<string, unknown>
