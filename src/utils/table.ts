@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import type { User } from '../types/users'
 import { columns } from './columns'
 
@@ -12,25 +12,30 @@ export const users = ref<User[]>([])
 export const page = ref<number>(0)
 export const sorting = ref<SortingState>([])
 // export const total_itens = ref<number>(1)
-const columnFilters = ref<ColumnFiltersState>([])
-export const filters = computed(() =>
-  // ação de transformar o array em um objeto com os filtros
-  columnFilters.value.reduce(
-    (accumulator, { id, value }) => {
-      // adequando como é repassado para a query \/
-      if (value) {
-        const valuesArray =
-          typeof value === 'string' && value.includes(',')
-            ? value.split(',').map(v => v.trim())
-            : [value]
+export const columnFilters = ref<ColumnFiltersState>([])
 
-        accumulator[id] = { inArray: valuesArray }
+export function getGraphQLFilters(operator: string) {
+  return columnFilters.value.reduce(
+    (accumulator, { id, value }) => {
+      if (!value) return accumulator
+
+      accumulator[id] = {
+        [operator]:
+          operator === 'ilike'
+            ? `%${value}%`
+            : operator === 'notIlike'
+              ? `%${value}%`
+              : value,
       }
       return accumulator
     },
     {} as Record<string, unknown>
   )
-)
+}
+
+export function resetAllFilters() {
+  columnFilters.value = []
+}
 
 export const table = useVueTable({
   get data() {

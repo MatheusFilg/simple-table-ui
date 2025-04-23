@@ -12,6 +12,7 @@ const inputRef = ref<HTMLInputElement | null>(null)
 defineExpose({
   inputRef,
 })
+
 </script>
 
 <template>

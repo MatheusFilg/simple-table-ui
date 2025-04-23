@@ -3,11 +3,12 @@ import { queryAllUsers } from '@/graphql/queries/user/getAllUsers'
 import type { User } from '@/types/users'
 import { FlexRender } from '@tanstack/vue-table'
 import { useQuery } from '@vue/apollo-composable'
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, Filter } from 'lucide-vue-next'
-import { watchEffect } from 'vue'
-import { filters, page, sorting, table, users } from '../utils/table'
+import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-vue-next'
+import { ref, watchEffect } from 'vue'
+import { columnFilters, getGraphQLFilters, page, sorting, table, users } from '../utils/table'
 import Pagination from './Pagination.vue'
-import Button from './ui/button/Button.vue'
+
+import AdvancedFilter from './AdvancedFilter.vue'
 import {
   Table,
   TableBody,
@@ -17,10 +18,8 @@ import {
   TableRow,
 } from './ui/table'
 
-const props = defineProps<{
-  filterFunction: (header: string) => void
-}>()
-
+const operatorValue = ref('')
+      
 const { result, error } = useQuery<{ userTable: User[] }>(
   queryAllUsers,
   () => ({
@@ -37,7 +36,7 @@ const { result, error } = useQuery<{ userTable: User[] }>(
       },
       {} as Record<string, { direction: 'asc' | 'desc'; priority: number }>
     ),
-    where: filters.value,
+    where: columnFilters.value.length > 0 ? getGraphQLFilters(operatorValue.value) : {},
   }),
   {fetchPolicy: 'cache-first'}
 )
@@ -47,10 +46,15 @@ watchEffect(() => {
     users.value = result.value.userTable
   }
 })
+
+function handleChangeOperator(filter: string) {
+  operatorValue.value = filter
+}
 </script>
 
 <template>
-      <div class="w-full overflow-auto border rounded">
+      <AdvancedFilter @filter-applied="handleChangeOperator"/>
+      <div class="w-full overflow-auto border rounded h-[75vh]">
         <div v-if="error" class="text-red-500">Erro: {{ error.message }}</div>
         <Table class="w-full relative overflow-auto">
           <TableHeader class="[&_tr]:border-b">
@@ -75,15 +79,6 @@ watchEffect(() => {
                     <ArrowUpNarrowWide v-if="header.column.getIsSorted() === 'asc'"/>
                     <ArrowDownWideNarrow v-if="header.column.getIsSorted() === 'desc'"/>
                   </div>
-  
-                  <Button 
-                    v-if="header.column.getCanFilter()"
-                    @click="props.filterFunction(header.column.id)"  
-                    variant="outline"
-                    class="h-7 w-7 p-1.5"
-                  >
-                    <Filter :size="20" />
-                  </Button>
                 </div>
               </TableHead>
             </TableRow>
@@ -111,7 +106,7 @@ watchEffect(() => {
         </Table>
       </div>
 
-      <div class="flex justify-center">
+      <div class="flex justify-center mt-2">
         <div class="flex items-center justify-between w-full">
           <p>Current Page: {{ page + 1 }} </p>
           <Pagination/>

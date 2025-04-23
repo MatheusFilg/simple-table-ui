@@ -22,7 +22,7 @@
     "graphql": "^16.10.0",
     "lucide-vue-next": "^0.475.0",
     "radix-vue": "^1.9.13",
-    "reka-ui": "^2.1.0",
+    "reka-ui": "^2.2.0",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "vee-validate": "^4.15.0",
