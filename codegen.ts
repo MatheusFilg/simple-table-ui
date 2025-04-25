@@ -1,7 +1,7 @@
 import type { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
-  schema: 'http://localhost:4000',
+  schema: 'http://localhost:8000/graphql',
   /* nao está verificando arquivos .vue, 
   idealmente é para as querys ficarem nessa pasta \/ */
   documents: ['src/graphql/queries/**/*.ts'],

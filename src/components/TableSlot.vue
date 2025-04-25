@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { queryAllUsers } from '@/graphql/queries/user/getAllUsers'
-import type { User } from '@/types/users'
+// import type { User } from '@/types/users'
 import { FlexRender } from '@tanstack/vue-table'
 import { useQuery } from '@vue/apollo-composable'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-vue-next'
@@ -8,6 +7,8 @@ import { ref, watchEffect } from 'vue'
 import { columnFilters, getGraphQLFilters, page, sorting, table, users } from '../utils/table'
 import Pagination from './Pagination.vue'
 
+import { queryAllData } from '@/graphql/queries/data'
+import type { Data } from '@/types/data'
 import AdvancedFilter from './AdvancedFilter.vue'
 import {
   Table,
@@ -20,8 +21,9 @@ import {
 
 const operatorValue = ref('')
       
-const { result, error } = useQuery<{ userTable: User[] }>(
-  queryAllUsers,
+const { result, error } = useQuery<{ dados: Data[] }>(
+  // queryAllUsers,
+  queryAllData,
   () => ({
     // a medida que a página vai passando eu vou dando skip de acordo com a quantidade do limit
     offset: page.value * 20,
@@ -43,16 +45,19 @@ const { result, error } = useQuery<{ userTable: User[] }>(
 
 watchEffect(() => {
   if (result.value) {
-    users.value = result.value.userTable
+    users.value = result.value.dados
   }
 })
 
 function handleChangeOperator(filter: string) {
   operatorValue.value = filter
 }
+
+// const {result: dataResult } = useQuery(queryAllData)
 </script>
 
 <template>
+  <!-- {{ console.log(dataResult) }} -->
       <AdvancedFilter @filter-applied="handleChangeOperator"/>
       <div class="w-full overflow-auto border rounded h-[75vh]">
         <div v-if="error" class="text-red-500">Erro: {{ error.message }}</div>
@@ -62,7 +67,6 @@ function handleChangeOperator(filter: string) {
               <TableHead 
                 v-for="header in table.getFlatHeaders()"
                 :key="header.id"
-                :style="`width: ${header.getSize()}px`"
                 class="h-10 px-2 text-base"
                 colspan=1
               >
@@ -96,7 +100,6 @@ function handleChangeOperator(filter: string) {
                 class="px-2 py-1"
               >
                 <FlexRender 
-                  :style="`width: ${cell.column.getSize()}px`"
                   :render="cell.column.columnDef.cell"
                   :props="cell.getContext()" 
                 />

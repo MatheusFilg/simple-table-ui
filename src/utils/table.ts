@@ -1,3 +1,4 @@
+import type { Data } from '@/types/data'
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -5,10 +6,10 @@ import {
   useVueTable,
 } from '@tanstack/vue-table'
 import { ref } from 'vue'
-import type { User } from '../types/users'
+// import type { User } from '../types/users'
 import { columns } from './columns'
 
-export const users = ref<User[]>([])
+export const users = ref<Data[]>([])
 export const page = ref<number>(0)
 export const sorting = ref<SortingState>([])
 // export const total_itens = ref<number>(1)

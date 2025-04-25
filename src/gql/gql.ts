@@ -14,16 +14,10 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n    query getAllFirstName($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n      userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n        firstName\n      }\n    }\n": typeof types.GetAllFirstNameDocument,
-    "\nquery UserTable($orderBy: UserTableOrderBy) {\n  userTable(orderBy: $orderBy) {\n    id\n  }\n}\n": typeof types.UserTableDocument,
-    "\n    query getAllLastName($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n      userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n        lastName\n      }\n    }\n": typeof types.GetAllLastNameDocument,
-    "\nquery getAllUsers($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n  userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n    id\n    firstName\n    lastName\n    email\n  }\n}\n": typeof types.GetAllUsersDocument,
+    "\n    query queryAllData($offset: Int, $limit: Int) {\n     dados(offset: $offset, limit: $limit) \n    }\n": typeof types.QueryAllDataDocument,
 };
 const documents: Documents = {
-    "\n    query getAllFirstName($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n      userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n        firstName\n      }\n    }\n": types.GetAllFirstNameDocument,
-    "\nquery UserTable($orderBy: UserTableOrderBy) {\n  userTable(orderBy: $orderBy) {\n    id\n  }\n}\n": types.UserTableDocument,
-    "\n    query getAllLastName($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n      userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n        lastName\n      }\n    }\n": types.GetAllLastNameDocument,
-    "\nquery getAllUsers($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n  userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n    id\n    firstName\n    lastName\n    email\n  }\n}\n": types.GetAllUsersDocument,
+    "\n    query queryAllData($offset: Int, $limit: Int) {\n     dados(offset: $offset, limit: $limit) \n    }\n": types.QueryAllDataDocument,
 };
 
 /**
@@ -43,19 +37,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query getAllFirstName($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n      userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n        firstName\n      }\n    }\n"): (typeof documents)["\n    query getAllFirstName($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n      userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n        firstName\n      }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\nquery UserTable($orderBy: UserTableOrderBy) {\n  userTable(orderBy: $orderBy) {\n    id\n  }\n}\n"): (typeof documents)["\nquery UserTable($orderBy: UserTableOrderBy) {\n  userTable(orderBy: $orderBy) {\n    id\n  }\n}\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    query getAllLastName($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n      userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n        lastName\n      }\n    }\n"): (typeof documents)["\n    query getAllLastName($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n      userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n        lastName\n      }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\nquery getAllUsers($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n  userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n    id\n    firstName\n    lastName\n    email\n  }\n}\n"): (typeof documents)["\nquery getAllUsers($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where: UserTableFilters) {\n  userTable(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) {\n    id\n    firstName\n    lastName\n    email\n  }\n}\n"];
+export function graphql(source: "\n    query queryAllData($offset: Int, $limit: Int) {\n     dados(offset: $offset, limit: $limit) \n    }\n"): (typeof documents)["\n    query queryAllData($offset: Int, $limit: Int) {\n     dados(offset: $offset, limit: $limit) \n    }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
