@@ -14,10 +14,10 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n    query queryAllData($offset: Int, $limit: Int) {\n     dados(offset: $offset, limit: $limit) \n    }\n": typeof types.QueryAllDataDocument,
+    "\n    query queryAllData($offset: Int, $limit: Int, $orderBy: OrderByInput, $where: JSON = null ) {\n     dados(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) \n    }\n": typeof types.QueryAllDataDocument,
 };
 const documents: Documents = {
-    "\n    query queryAllData($offset: Int, $limit: Int) {\n     dados(offset: $offset, limit: $limit) \n    }\n": types.QueryAllDataDocument,
+    "\n    query queryAllData($offset: Int, $limit: Int, $orderBy: OrderByInput, $where: JSON = null ) {\n     dados(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) \n    }\n": types.QueryAllDataDocument,
 };
 
 /**
@@ -37,7 +37,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query queryAllData($offset: Int, $limit: Int) {\n     dados(offset: $offset, limit: $limit) \n    }\n"): (typeof documents)["\n    query queryAllData($offset: Int, $limit: Int) {\n     dados(offset: $offset, limit: $limit) \n    }\n"];
+export function graphql(source: "\n    query queryAllData($offset: Int, $limit: Int, $orderBy: OrderByInput, $where: JSON = null ) {\n     dados(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) \n    }\n"): (typeof documents)["\n    query queryAllData($offset: Int, $limit: Int, $orderBy: OrderByInput, $where: JSON = null ) {\n     dados(offset: $offset, limit: $limit, orderBy: $orderBy, where: $where) \n    }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

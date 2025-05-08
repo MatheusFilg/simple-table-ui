@@ -6,36 +6,36 @@ import {
   useVueTable,
 } from '@tanstack/vue-table'
 import { ref } from 'vue'
-// import type { User } from '../types/users'
 import { columns } from './columns'
 
 export const users = ref<Data[]>([])
 export const page = ref<number>(0)
 export const sorting = ref<SortingState>([])
-// export const total_itens = ref<number>(1)
+export const columnVisibility = ref<Record<string, boolean>>({
+  sn_cooperativa: false,
+  cd_cliente_monitor: false,
+  cd_cliente_benner: false,
+  dt_status: false,
+  cd_centro_custo: false,
+})
 export const columnFilters = ref<ColumnFiltersState>([])
 
 export function getGraphQLFilters(operator: string) {
+  // talvez trocar de reduce para map quando for implementar multiplos valores
   return columnFilters.value.reduce(
-    (accumulator, { id, value }) => {
-      if (!value) return accumulator
+    (accumulator, { value }: any) => {
+      if (!value.inputValue?.[0]) return accumulator
 
-      accumulator[id] = {
-        [operator]:
-          operator === 'ilike'
-            ? `%${value}%`
-            : operator === 'notIlike'
-              ? `%${value}%`
-              : value,
+      const columnName = value.columnValue[0]
+      if (!columnName) return accumulator
+
+      accumulator[columnName] = {
+        [operator]: value.inputValue[0],
       }
       return accumulator
     },
     {} as Record<string, unknown>
   )
-}
-
-export function resetAllFilters() {
-  columnFilters.value = []
 }
 
 export const table = useVueTable({
@@ -44,7 +44,7 @@ export const table = useVueTable({
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
-  pageCount: -1, //poderia ser -1 caso não houvesse a informação de quantas paginas
+  pageCount: -1,
   manualFiltering: true,
   manualSorting: true,
   manualPagination: true,
@@ -55,15 +55,23 @@ export const table = useVueTable({
     get columnFilters() {
       return columnFilters.value
     },
+    get columnVisibility() {
+      return columnVisibility.value
+    },
   },
   onSortingChange: updater => {
     sorting.value =
       typeof updater === 'function' ? updater(sorting.value) : updater
     page.value = 0
   },
-  onColumnFiltersChange: updater => {
-    columnFilters.value =
-      typeof updater === 'function' ? updater(columnFilters.value) : updater
-    page.value = 0
-  },
+  //Ambas funções abaixas nao estao sendo chamadas
+
+  // onColumnFiltersChange: updater => {
+  //   columnFilters.value =
+  //     typeof updater === 'function' ? updater(columnFilters.value) : updater
+  // },
+  // onColumnVisibilityChange: updater => {
+  //   columnVisibility.value =
+  //     typeof updater === 'function' ? updater(columnVisibility.value) : updater
+  // },
 })

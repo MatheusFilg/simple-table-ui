@@ -4,7 +4,11 @@ schema {
 
 scalar JSON
 
+input OrderByInput {
+  direction: String = "asc"
+  field: String!
+}
+
 type Query {
-  dados(limit: Int! = 100, offset: Int! = 0): [JSON!]!
-  dadosFiltrados(campo: String!, limit: Int! = 100, offset: Int! = 0, valor: String!): [JSON!]!
+  dados(limit: Int! = 100, offset: Int! = 0, orderBy: OrderByInput = null, where: JSON = null): [JSON!]!
 }

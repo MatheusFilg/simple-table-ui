@@ -4,7 +4,6 @@ import Button from './ui/button/Button.vue';
 
 function handleChangePage(currentPage: number) {
   page.value = currentPage
-  console.log(page.value, 'valor da pagina atualizando')
 }
 </script>
 
