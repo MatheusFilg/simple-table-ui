@@ -1,4 +1,3 @@
-// import DialogTeste from '@/components/DialogSlot.vue'
 // import type { User } from '../types/users'
 import type { Data } from '@/types/data'
 import type { ColumnDef } from '@tanstack/vue-table'

@@ -1,16 +1,14 @@
 <script setup lang="ts">
+import { queryAllData } from '@/graphql/queries/data'
+import type { Data } from '@/types/data'
 import { FlexRender } from '@tanstack/vue-table'
 import { useQuery } from '@vue/apollo-composable'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-vue-next'
-import { onMounted, ref, watch, watchEffect } from 'vue'
-import { columnFilters, columnVisibility, getGraphQLFilters, page, sorting, table, users } from '../utils/table'
-import Pagination from './Pagination.vue'
-
-import { queryAllData } from '@/graphql/queries/data'
-import type { Data } from '@/types/data'
+import { ref, watchEffect } from 'vue'
+import { columnFilters, getGraphQLFilters, page, sorting, table, users } from '../utils/table'
 import AdvancedFilter from './AdvancedFilter.vue'
-import { Button } from './ui/button'
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from './ui/dropdown-menu'
+import ColumnVisibility from './ColumnVisibility.vue'
+import Pagination from './Pagination.vue'
 import {
   Table,
   TableBody,
@@ -44,43 +42,12 @@ watchEffect(() => {
     users.value = result.value.dados
   }
 })
-
-const checkedColumns = ref<Record<string, boolean>>({})
-
-onMounted(() => {
-  table.getAllLeafColumns().map(column => {
-    checkedColumns.value[column.id] = column.getIsVisible()
-  })
-})
-
-watch(checkedColumns, (newVal) => {
-  columnVisibility.value = { ...newVal }
-}, { deep: true })
 </script>
 
 <template>
       <div class="flex flex-row w-full justify-between align-middle">
         <AdvancedFilter @filter-applied="handleChangeOperator"/>
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger as-child>
-              <Button size="sm">
-                <span :class="{ 'hidden lg:inline': true }">Select Columns</span>
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              <DropdownMenuCheckboxItem 
-                v-for="column in table.getAllLeafColumns()" 
-                class="capitalize"
-                :key="column.id"
-                v-model="checkedColumns[column.id]" 
-              >
-              <FlexRender :render="column.columnDef.header"/>
-              </DropdownMenuCheckboxItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <ColumnVisibility />
       </div>
       <div class="w-full overflow-auto border rounded h-[75vh] grid">
         <div v-if="error" class="text-red-500">Erro: {{ error.message }}</div>
