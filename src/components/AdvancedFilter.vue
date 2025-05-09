@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { columnFilters, table } from '@/utils/table';
+import { columnFilters, columnVisibility, table } from '@/utils/table';
 import { FlexRender } from '@tanstack/vue-table';
 import { ListFilter, Trash2 } from 'lucide-vue-next';
 import { customAlphabet } from "nanoid";
@@ -13,7 +13,7 @@ const emit = defineEmits(['filter-applied'])
 
 const idValue = ref('')
 
-const columnOperators = table.getFlatHeaders()
+const columnOperators = ref()
 const columnValue = ref([])
 const inputValue = ref<string[]>([])
 
@@ -72,6 +72,10 @@ function handleResetFilter() {
 function handleDeleteFilter(filterIndex: string) {
   columnFilters.value = columnFilters.value.filter((item) => item.id !== filterIndex)
 }
+
+watch(columnVisibility, () => {
+    columnOperators.value = table.getVisibleFlatColumns()
+  })
 
 watch([columnValue.value,joinValue.value,inputValue.value],() => {
   columnFilters.value.map((_, index) => { handleApplyFilter(index) })
@@ -134,14 +138,13 @@ watch([columnValue.value,joinValue.value,inputValue.value],() => {
                   <SelectContent>
                     <SelectItem
                       v-for="columnOperator in columnOperators" 
-                      :key="columnOperator.index" 
-                      :value="columnOperator.column.id" 
-                      :class="`${columnOperator.column.getCanFilter() ? '' : 'hidden'}`"
+                      :key="columnOperator.id" 
+                      :value="columnOperator.id" 
+                      :class="`${columnOperator.getCanFilter() ? '' : 'hidden'}`"
                       class="capitalize"
                     >
                     <FlexRender
-                      :render="columnOperator.column.columnDef.header" 
-                      :props="columnOperator.getContext()"
+                      :render="columnOperator.columnDef.header" 
                     />
                     </SelectItem>
                   </SelectContent>

@@ -28,7 +28,7 @@ watch(checkedColumns, (newVal) => {
         <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <Button size="sm">
-                <span :class="{ 'hidden lg:inline': true }">Select Columns</span>
+                <span>Select Columns</span>
               </Button>
             </DropdownMenuTrigger>
 
