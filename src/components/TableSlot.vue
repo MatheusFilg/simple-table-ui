@@ -5,7 +5,7 @@ import { FlexRender } from '@tanstack/vue-table'
 import { useQuery } from '@vue/apollo-composable'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
-import { columnFilters, getGraphQLFilters, page, sorting, table, users } from '../utils/table'
+import { columnFilters, getGraphQLFilters, pagination, sorting, table, users } from '../utils/table'
 import AdvancedFilter from './AdvancedFilter.vue'
 import ColumnVisibility from './ColumnVisibility.vue'
 import Pagination from './Pagination.vue'
@@ -26,8 +26,9 @@ function handleChangeOperator(filter: string) {
 const { result, error } = useQuery<{ dados: Data[] }>(
   queryAllData,
   () => ({
-    offset: page.value * 25,
-    limit: 25,
+    offset: pagination.value.pageIndex * pagination.value.pageSize,
+    // \/ componente de quantidade de items vai ter que controlar
+    limit: pagination.value.pageSize,
     orderBy: sorting.value.length > 0 ? {
       field: sorting.value[0].id,
       direction: sorting.value[0].desc ? 'desc' : 'asc'
@@ -101,7 +102,7 @@ watchEffect(() => {
 
       <div class="flex justify-center mt-2">
         <div class="flex items-center justify-between w-full">
-          <p>Current Page: {{ page + 1 }} </p>
+          <p>Current Page: {{ pagination.pageIndex + 1 }} </p>
           <Pagination/>
         </div>
       </div>

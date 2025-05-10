@@ -1,6 +1,7 @@
 import type { Data } from '@/types/data'
 import {
   type ColumnFiltersState,
+  type PaginationState,
   type SortingState,
   getCoreRowModel,
   useVueTable,
@@ -9,7 +10,11 @@ import { ref } from 'vue'
 import { columns } from './columns'
 
 export const users = ref<Data[]>([])
-export const page = ref<number>(0)
+export const pagination = ref<PaginationState>({
+  pageIndex: 0,
+  pageSize: 25,
+})
+
 export const sorting = ref<SortingState>([])
 export const columnVisibility = ref<Record<string, boolean>>({
   sn_cooperativa: false,
@@ -38,13 +43,24 @@ export function getGraphQLFilters(operator: string) {
   )
 }
 
+function setPagination({
+  pageIndex,
+  pageSize,
+}: PaginationState): PaginationState {
+  pagination.value.pageIndex = pageIndex
+  pagination.value.pageSize = pageSize
+
+  return { pageIndex, pageSize }
+}
+
 export const table = useVueTable({
   get data() {
     return users.value
   },
   columns,
   getCoreRowModel: getCoreRowModel(),
-  pageCount: -1,
+  // valor fixo pois ñ tem o total de itens
+  pageCount: 10,
   manualFiltering: true,
   manualSorting: true,
   manualPagination: true,
@@ -58,11 +74,23 @@ export const table = useVueTable({
     get columnVisibility() {
       return columnVisibility.value
     },
+    get pagination() {
+      return pagination.value
+    },
   },
   onSortingChange: updater => {
     sorting.value =
       typeof updater === 'function' ? updater(sorting.value) : updater
-    page.value = 0
+  },
+  onPaginationChange: updater => {
+    typeof updater === 'function'
+      ? setPagination(
+          updater({
+            pageIndex: pagination.value.pageIndex,
+            pageSize: pagination.value.pageSize,
+          })
+        )
+      : setPagination(updater)
   },
   //Ambas funções abaixas nao estao sendo chamadas
 
