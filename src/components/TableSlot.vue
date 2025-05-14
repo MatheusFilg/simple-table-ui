@@ -8,6 +8,7 @@ import { ref, watchEffect } from 'vue'
 import { columnFilters, getGraphQLFilters, pagination, sorting, table, users } from '../utils/table'
 import AdvancedFilter from './AdvancedFilter.vue'
 import ColumnVisibility from './ColumnVisibility.vue'
+import DateRangeFilter from './DateRangeFilter.vue'
 import Pagination from './Pagination.vue'
 import {
   Table,
@@ -19,8 +20,14 @@ import {
 } from './ui/table'
 
 const operatorValue = ref('')
-function handleChangeOperator(filter: string) {
-  operatorValue.value = filter
+function handleChangeOperator(operator: string) {
+  operatorValue.value = operator
+}
+
+const conditionValue = ref('')
+function handleChangeCondition(condition: string) {
+  conditionValue.value = condition
+  // console.log(conditionValue.value, 'aaassddd')
 }
 
 const { result, error } = useQuery<{ dados: Data[] }>(
@@ -33,7 +40,7 @@ const { result, error } = useQuery<{ dados: Data[] }>(
       field: sorting.value[0].id,
       direction: sorting.value[0].desc ? 'desc' : 'asc'
     } : null,
-    where: columnFilters.value.length > 0 ? getGraphQLFilters(operatorValue.value) : {},
+    where: columnFilters.value.length > 0 ? getGraphQLFilters(operatorValue.value, conditionValue.value) : {},
   }),
   {fetchPolicy: 'cache-first'}
 )
@@ -47,7 +54,8 @@ watchEffect(() => {
 
 <template>
       <div class="flex flex-row w-full justify-between align-middle">
-        <AdvancedFilter @filter-applied="handleChangeOperator"/>
+        <AdvancedFilter @filter-applied="handleChangeOperator" @condition-applied="handleChangeCondition"/>
+        <DateRangeFilter />
         <ColumnVisibility />
       </div>
       <div class="w-full overflow-auto border rounded h-[75vh] grid">

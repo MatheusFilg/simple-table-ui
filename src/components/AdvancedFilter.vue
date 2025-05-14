@@ -9,7 +9,7 @@ import { Input } from './ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
-const emit = defineEmits(['filter-applied'])
+const emit = defineEmits(['filter-applied', 'condition-applied'])
 
 const idValue = ref('')
 
@@ -40,11 +40,13 @@ function handleApplyFilter(index: number) {
             value: {
               columnValue: columnValue.value,
               inputValue: inputValue.value,
-              joinValue: joinValue.value
+              joinValue: joinValue.value,
+              conditionalValue: conditionalValue.value
             }
       }
     }
     emit('filter-applied', joinValue.value)
+    emit('condition-applied', conditionalValue.value)
 }
 
 function handleAddFilter() {
@@ -57,7 +59,8 @@ function handleAddFilter() {
     value: {
       columnValue: columnValue.value,
       inputValue: inputValue.value,
-      joinValue: joinValue.value
+      joinValue: joinValue.value,
+      conditionalValue: conditionOperators.value[0].value
     },
   })
 }
@@ -67,6 +70,7 @@ function handleResetFilter() {
   columnValue.value = []
   inputValue.value = []
   joinValue.value = []
+  conditionalValue.value = []
 }
 
 function handleDeleteFilter(filterIndex: string) {
@@ -77,7 +81,7 @@ watch(columnVisibility, () => {
     columnOperators.value = table.getVisibleFlatColumns()
   })
 
-watch([columnValue.value,joinValue.value,inputValue.value],() => {
+watch([columnValue.value,joinValue.value,inputValue.value, conditionalValue.value],() => {
   columnFilters.value.map((_, index) => { handleApplyFilter(index) })
 })
 </script>
@@ -97,7 +101,7 @@ watch([columnValue.value,joinValue.value,inputValue.value],() => {
             </span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="start" class="w-[496px]">
+        <PopoverContent align="start" class="min-w-fit">
           <div class="flex gap-4 flex-col">
             <h3 class="font-bold">{{ columnFilters.length > 0 ? 'Filters' : 'No Filters Applied'}}</h3>
              
@@ -107,14 +111,15 @@ watch([columnValue.value,joinValue.value,inputValue.value],() => {
               :key="index"
             >
               <!-- Div para a primeira parte do filtro -->
-              <div class="min-w-[4.5rem] text-center h-fit">
-                <p class="text-muted-foreground text-base" v-if="index === 0">
+              <div class="text-center">
+                <p class="min-w-16 text-muted-foreground text-base" v-if="index === 0">
                   Where
                 </p>
-                <div v-else>
-                  <Select>
-                    <SelectTrigger v-model="conditionalValue">
-                      <SelectValue placeholder="Select a Condition" />
+                <div class="min-w-16 " v-else>
+                  <!-- :defaultValue="conditionOperators[0].value" -->
+                  <Select v-model="conditionalValue[index]" >
+                    <SelectTrigger>
+                      <SelectValue/>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem 
@@ -122,7 +127,7 @@ watch([columnValue.value,joinValue.value,inputValue.value],() => {
                         :key="conditionOperator.index" 
                         :value="conditionOperator.value"
                       >
-                        {{ conditionOperator.value }}
+                        {{ conditionOperator.label }}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -171,9 +176,10 @@ watch([columnValue.value,joinValue.value,inputValue.value],() => {
               </div>
 
               <!-- Quarta Parte do Filtro -->
-              <div>
+              <div class="min-w-28">
                 <Input
                   v-model="inputValue[index]"
+                  placeholder="Search a Value"
                   type="text"
                 />
               </div>

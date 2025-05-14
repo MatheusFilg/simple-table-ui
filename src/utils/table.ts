@@ -25,8 +25,12 @@ export const columnVisibility = ref<Record<string, boolean>>({
 })
 export const columnFilters = ref<ColumnFiltersState>([])
 
-export function getGraphQLFilters(operator: string) {
+export function getGraphQLFilters(
+  operator: Array<string>,
+  condition: Array<string>
+) {
   // talvez trocar de reduce para map quando for implementar multiplos valores
+  console.log(condition, 'aqui')
   return columnFilters.value.reduce(
     (accumulator, { value }: any) => {
       if (!value.inputValue?.[0]) return accumulator
@@ -34,8 +38,12 @@ export function getGraphQLFilters(operator: string) {
       const columnName = value.columnValue[0]
       if (!columnName) return accumulator
 
+      if (condition[1] === 'and') {
+        console.log('and!!')
+      }
+
       accumulator[columnName] = {
-        [operator]: value.inputValue[0],
+        [operator[0]]: value.inputValue[0],
       }
       return accumulator
     },
