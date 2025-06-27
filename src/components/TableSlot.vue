@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { queryAllData } from '@/graphql/queries/data'
-import type { Data } from '@/types/data'
+import { queryAllUsers } from '@/graphql/queries/user/getAllUsers'
 import { FlexRender } from '@tanstack/vue-table'
 import { useQuery } from '@vue/apollo-composable'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-vue-next'
 import { ref, watchEffect } from 'vue'
-import { columnFilters, getGraphQLFilters, pagination, sorting, table, users } from '../utils/table'
-import AdvancedFilter from './AdvancedFilter.vue'
+import { pagination, sorting, table, users } from '../utils/table'
+import AdvancedFilter, { type FilterItem } from './AdvancedFilter.vue'
 import ColumnVisibility from './ColumnVisibility.vue'
 import DateRangeFilter from './DateRangeFilter.vue'
 import Pagination from './Pagination.vue'
@@ -18,43 +17,42 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
+import type { User } from '@/types/users'
 
-const operatorValue = ref('')
-function handleChangeOperator(operator: string) {
-  operatorValue.value = operator
+const filterState = ref({
+  items: [] as FilterItem[],
+  where: null as Record<string, any> | null
+});
+
+function handleFilterUpdate({ filters, where }: { filters: FilterItem[]; where: Record<string, any> | null }) {
+  filterState.value.items = filters;
+  filterState.value.where = where;
 }
 
-const conditionValue = ref('')
-function handleChangeCondition(condition: string) {
-  conditionValue.value = condition
-  // console.log(conditionValue.value, 'aaassddd')
-}
-
-const { result, error } = useQuery<{ dados: Data[] }>(
-  queryAllData,
+const { result, error } = useQuery<{ userTable: User[] }>(
+  queryAllUsers,
   () => ({
     offset: pagination.value.pageIndex * pagination.value.pageSize,
-    // \/ componente de quantidade de items vai ter que controlar
     limit: pagination.value.pageSize,
     orderBy: sorting.value.length > 0 ? {
       field: sorting.value[0].id,
       direction: sorting.value[0].desc ? 'desc' : 'asc'
     } : null,
-    where: columnFilters.value.length > 0 ? getGraphQLFilters(operatorValue.value, conditionValue.value) : {},
+    where: filterState.value.items.length > 0 ? filterState.value.where : {},
   }),
   {fetchPolicy: 'cache-first'}
 )
 
 watchEffect(() => {
   if (result.value) {
-    users.value = result.value.dados
+    users.value = result.value.userTable
   }
 })
 </script>
 
 <template>
       <div class="flex flex-row w-full justify-between align-middle">
-        <AdvancedFilter @filter-applied="handleChangeOperator" @condition-applied="handleChangeCondition"/>
+        <AdvancedFilter :initial-filters="filterState.items" @update:filters="handleFilterUpdate" />
         <DateRangeFilter />
         <ColumnVisibility />
       </div>

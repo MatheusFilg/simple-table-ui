@@ -1,4 +1,3 @@
-import type { Data } from '@/types/data'
 import {
   type ColumnFiltersState,
   type PaginationState,
@@ -8,47 +7,35 @@ import {
 } from '@tanstack/vue-table'
 import { ref } from 'vue'
 import { columns } from './columns'
+import type { User } from '@/types/users'
 
-export const users = ref<Data[]>([])
+export const users = ref<User[]>([])
 export const pagination = ref<PaginationState>({
   pageIndex: 0,
   pageSize: 25,
 })
 
 export const sorting = ref<SortingState>([])
-export const columnVisibility = ref<Record<string, boolean>>({
-  sn_cooperativa: false,
-  cd_cliente_monitor: false,
-  cd_cliente_benner: false,
-  dt_status: false,
-  cd_centro_custo: false,
-})
+export const columnVisibility = ref<Record<string, boolean>>()
 export const columnFilters = ref<ColumnFiltersState>([])
 
-export function getGraphQLFilters(
-  operator: Array<string>,
-  condition: Array<string>
-) {
-  // talvez trocar de reduce para map quando for implementar multiplos valores
-  console.log(condition, 'aqui')
-  return columnFilters.value.reduce(
-    (accumulator, { value }: any) => {
-      if (!value.inputValue?.[0]) return accumulator
+export function getGraphQLFilters(operator: Array<string>) {
+  const filters = columnFilters.value.reduce(
+    (acc, { value }: any) => {
+      if (!value.inputValue?.[0]) return acc
 
       const columnName = value.columnValue[0]
-      if (!columnName) return accumulator
+      if (!columnName) return acc
 
-      if (condition[1] === 'and') {
-        console.log('and!!')
-      }
-
-      accumulator[columnName] = {
+      acc[columnName] = {
         [operator[0]]: value.inputValue[0],
       }
-      return accumulator
+
+      return acc
     },
     {} as Record<string, unknown>
   )
+  return Object.keys(filters).length > 0 ? filters : {}
 }
 
 function setPagination({

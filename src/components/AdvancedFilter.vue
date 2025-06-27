@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { columnFilters, columnVisibility, table } from '@/utils/table';
-import { FlexRender } from '@tanstack/vue-table';
+import { FlexRender, type ColumnDefTemplate, type HeaderContext } from '@tanstack/vue-table';
 import { ListFilter, Trash2 } from 'lucide-vue-next';
 import { customAlphabet } from "nanoid";
 import { ref, watch } from 'vue';
@@ -9,81 +9,80 @@ import { Input } from './ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
-const emit = defineEmits(['filter-applied', 'condition-applied'])
+export interface FilterItem {
+  id: string;
+  column: string;
+  operator: string;
+  value: string;
+}
 
-const idValue = ref('')
+const emit = defineEmits(['update:filters'])
 
-const columnOperators = ref()
-const columnValue = ref([])
-const inputValue = ref<string[]>([])
+const props = defineProps<{
+  initialFilters?: FilterItem[]
+}>()
 
-const joinOperators = ref([
+
+const filterItems = ref<FilterItem[]>(props.initialFilters || []);
+
+const operators = ref([
     { index: 1, label: "Contains", value: "like" as const },
     { index: 2, label: "Does not contain", value: "notLike" as const },
-    { index: 3, label: "Is", value: "equals" as const },
-    { index: 4, label: "Is not", value: "notEquals" as const },
+    { index: 3, label: "Is", value: "eq" as const },
+    { index: 4, label: "Is not", value: "ne" as const },
     { index: 5, label: "Is Empty", value: "isNull" as const },
     { index: 6, label: "Is Not Empty", value: "isNotNull" as const },
 ])
-const joinValue = ref([])
 
-const conditionOperators = ref([
-  { index: 1, label: "And", value: "and" as const },
-  { index: 2, label: "Or", value: "or" as const },
-])
-const conditionalValue = ref([])
+const columnOptions = ref<{ id: string; header: ColumnDefTemplate<HeaderContext<{ id: number; email: string; firstName: string; lastName: string; }, unknown>> | undefined; }[]>([])
 
-function handleApplyFilter(index: number) {
-    if(inputValue.value[index] !== undefined && inputValue.value[index] !== '') {
-        columnFilters.value[index] = {
-            id: columnFilters.value[index].id || idValue.value,
-            value: {
-              columnValue: columnValue.value,
-              inputValue: inputValue.value,
-              joinValue: joinValue.value,
-              conditionalValue: conditionalValue.value
-            }
-      }
-    }
-    emit('filter-applied', joinValue.value)
-    emit('condition-applied', conditionalValue.value)
+function addFilter() {
+  filterItems.value.push({
+    id: customAlphabet("1234567890ABCDEF", 6)(),
+    column: '',
+    operator: '', 
+    value: ''
+  });
 }
 
-function handleAddFilter() {
-  idValue.value = customAlphabet(
-      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-      6
-    )()
-  columnFilters.value.push({
-    id: idValue.value,
-    value: {
-      columnValue: columnValue.value,
-      inputValue: inputValue.value,
-      joinValue: joinValue.value,
-      conditionalValue: conditionOperators.value[0].value
-    },
-  })
+function removeFilter(id: string) {
+  filterItems.value = filterItems.value.filter(item => item.id !== id);
 }
 
-function handleResetFilter() {
-  columnFilters.value = []
-  columnValue.value = []
-  inputValue.value = []
-  joinValue.value = []
-  conditionalValue.value = []
+function resetFilters() {
+  filterItems.value = [];
 }
 
-function handleDeleteFilter(filterIndex: string) {
-  columnFilters.value = columnFilters.value.filter((item) => item.id !== filterIndex)
+function buildWhereObject() {
+  const where: Record<string, any> = {};
+  
+  filterItems.value.map(item => {
+    if (!item.column || !item.value) return;
+    
+    where[item.column] = {
+      [item.operator]: item.value
+    };
+  });
+
+  console.log(where, 'where')
+  return Object.keys(where).length > 0 ? where : null;
 }
+
+watch(filterItems, () => {
+  emit('update:filters', {
+    filters: filterItems.value,
+    where: buildWhereObject()
+  });
+}, { deep: true });
 
 watch(columnVisibility, () => {
-    columnOperators.value = table.getVisibleFlatColumns()
-  })
-
-watch([columnValue.value,joinValue.value,inputValue.value, conditionalValue.value],() => {
-  columnFilters.value.map((_, index) => { handleApplyFilter(index) })
-})
+  columnOptions.value = table.getVisibleFlatColumns()
+    .filter(column => column.getCanFilter())
+    .map(column => ({
+      id: column.id,
+      header: column.columnDef.header
+    }));
+}, { immediate: true })
 </script>
 
 <template>
@@ -95,61 +94,45 @@ watch([columnValue.value,joinValue.value,inputValue.value, conditionalValue.valu
             Filters
             <span
               class="bg-foreground/20 p-1 h-4 min-w-4 w-fit flex items-center justify-center text-[10px] font-normal rounded"
-              :style="`display:${columnFilters.length > 0 ? 'flex' : 'none'}`"
+              :style="`display:${filterItems.length > 0 ? 'flex' : 'none'}`"
               >
-              {{ columnFilters.length > 0 ? columnFilters.length : '' }}
+              {{ filterItems.length > 0 ? filterItems.length : '' }}
             </span>
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" class="min-w-fit">
           <div class="flex gap-4 flex-col">
-            <h3 class="font-bold">{{ columnFilters.length > 0 ? 'Filters' : 'No Filters Applied'}}</h3>
+            <h3 class="font-bold">{{ filterItems.length > 0 ? 'Filters' : 'No Filters Applied'}}</h3>
              
             <div 
               class="flex gap-1 items-center" 
-              v-for="(columnFilter, index) in columnFilters"
-              :key="index"
+              v-for="(filter, index) in filterItems"
+              :key="filter.id"
             >
               <!-- Div para a primeira parte do filtro -->
               <div class="text-center">
                 <p class="min-w-16 text-muted-foreground text-base" v-if="index === 0">
                   Where
                 </p>
-                <div class="min-w-16 " v-else>
-                  <!-- :defaultValue="conditionOperators[0].value" -->
-                  <Select v-model="conditionalValue[index]" >
-                    <SelectTrigger>
-                      <SelectValue/>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem 
-                        v-for="conditionOperator in conditionOperators" 
-                        :key="conditionOperator.index" 
-                        :value="conditionOperator.value"
-                      >
-                        {{ conditionOperator.label }}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <div class="min-w-16 " v-else />
               </div>
 
               <!-- Segunda Parte do Filtro -->
               <div>
-                <Select v-model="columnValue[index]">
+                <Select v-model="filter.column">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a Column" class="capitalize" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem
-                      v-for="columnOperator in columnOperators" 
+                      v-for="columnOperator in columnOptions" 
                       :key="columnOperator.id" 
                       :value="columnOperator.id" 
-                      :class="`${columnOperator.getCanFilter() ? '' : 'hidden'}`"
                       class="capitalize"
-                    >
+                      >
+                      <!-- :class="`${columnOperator.getCanFilter() ? '' : 'hidden'}`" -->
                     <FlexRender
-                      :render="columnOperator.columnDef.header" 
+                      :render="columnOperator.header" 
                     />
                     </SelectItem>
                   </SelectContent>
@@ -158,14 +141,14 @@ watch([columnValue.value,joinValue.value,inputValue.value, conditionalValue.valu
 
               <!-- Terceira Parte do Filtro -->
               <div>
-                <Select v-model="joinValue[index]">
+                <Select v-model="filter.operator">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a Join" />
                   </SelectTrigger>
 
                   <SelectContent>
                     <SelectItem 
-                      v-for="joinOperator in joinOperators" 
+                      v-for="joinOperator in operators" 
                       :key="joinOperator.index" 
                       :value="joinOperator.value"
                     >
@@ -178,7 +161,7 @@ watch([columnValue.value,joinValue.value,inputValue.value, conditionalValue.valu
               <!-- Quarta Parte do Filtro -->
               <div class="min-w-28">
                 <Input
-                  v-model="inputValue[index]"
+                  v-model="filter.value"
                   placeholder="Search a Value"
                   type="text"
                 />
@@ -189,7 +172,7 @@ watch([columnValue.value,joinValue.value,inputValue.value, conditionalValue.valu
                 <Button 
                   variant="destructive"
                   size="icon" 
-                  @click="handleDeleteFilter(columnFilter.id)"
+                  @click="removeFilter(filter.id)"
                 >
                   <Trash2 />
                 </Button>
@@ -199,7 +182,7 @@ watch([columnValue.value,joinValue.value,inputValue.value, conditionalValue.valu
             <div class="flex gap-2">
               <Button 
                 size="sm"
-                @click="handleAddFilter"
+                @click="addFilter"
               >
                 Add Filter
               </Button>
@@ -207,7 +190,7 @@ watch([columnValue.value,joinValue.value,inputValue.value, conditionalValue.valu
                 variant="outline" 
                 size="sm" 
                 v-if="columnFilters.length > 0" 
-                :onclick="handleResetFilter"
+                :onclick="resetFilters"
               >
                 Reset Filters
               </Button>
