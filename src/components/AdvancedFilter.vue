@@ -26,8 +26,8 @@ const props = defineProps<{
 const filterItems = ref<FilterItem[]>(props.initialFilters || []);
 
 const operators = ref([
-    { index: 1, label: "Contains", value: "like" as const },
-    { index: 2, label: "Does not contain", value: "notLike" as const },
+    { index: 1, label: "Contains", value: "ilike" as const },
+    { index: 2, label: "Does not contain", value: "notIlike" as const },
     { index: 3, label: "Is", value: "eq" as const },
     { index: 4, label: "Is not", value: "ne" as const },
     { index: 5, label: "Is Empty", value: "isNull" as const },
@@ -59,12 +59,17 @@ function buildWhereObject() {
   filterItems.value.map(item => {
     if (!item.column || !item.value) return;
     
-    where[item.column] = {
-      [item.operator]: item.value
+    if(item.operator === 'ilike' || item.operator === 'notIlike') {
+      where[item.column] = {
+      [item.operator]: `%${item.value}%`
     };
-  });
+    } else {
+      where[item.column] = {
+      [item.operator]: item.value
+    }
+    }
+  })
 
-  console.log(where, 'where')
   return Object.keys(where).length > 0 ? where : null;
 }
 

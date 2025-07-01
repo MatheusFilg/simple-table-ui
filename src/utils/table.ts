@@ -19,25 +19,6 @@ export const sorting = ref<SortingState>([])
 export const columnVisibility = ref<Record<string, boolean>>()
 export const columnFilters = ref<ColumnFiltersState>([])
 
-export function getGraphQLFilters(operator: Array<string>) {
-  const filters = columnFilters.value.reduce(
-    (acc, { value }: any) => {
-      if (!value.inputValue?.[0]) return acc
-
-      const columnName = value.columnValue[0]
-      if (!columnName) return acc
-
-      acc[columnName] = {
-        [operator[0]]: value.inputValue[0],
-      }
-
-      return acc
-    },
-    {} as Record<string, unknown>
-  )
-  return Object.keys(filters).length > 0 ? filters : {}
-}
-
 function setPagination({
   pageIndex,
   pageSize,

@@ -112,7 +112,6 @@ watchEffect(() => {
 
       <div class="flex justify-center mt-2">
         <div class="flex items-center justify-between w-full">
-          <!-- <p>Current Page: {{ pagination.pageIndex }} </p> -->
           <Pagination/>
         </div>
       </div>
