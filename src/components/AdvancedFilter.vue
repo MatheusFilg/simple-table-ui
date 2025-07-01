@@ -22,7 +22,6 @@ const props = defineProps<{
   initialFilters?: FilterItem[]
 }>()
 
-
 const filterItems = ref<FilterItem[]>(props.initialFilters || []);
 
 const operators = ref([
@@ -30,8 +29,6 @@ const operators = ref([
     { index: 2, label: "Does not contain", value: "notIlike" as const },
     { index: 3, label: "Is", value: "eq" as const },
     { index: 4, label: "Is not", value: "ne" as const },
-    { index: 5, label: "Is Empty", value: "isNull" as const },
-    { index: 6, label: "Is Not Empty", value: "isNotNull" as const },
 ])
 
 const columnOptions = ref<{ id: string; header: ColumnDefTemplate<HeaderContext<{ id: number; email: string; firstName: string; lastName: string; }, unknown>> | undefined; }[]>([])
@@ -114,7 +111,6 @@ watch(columnVisibility, () => {
               v-for="(filter, index) in filterItems"
               :key="filter.id"
             >
-              <!-- Div para a primeira parte do filtro -->
               <div class="text-center">
                 <p class="min-w-16 text-muted-foreground text-base" v-if="index === 0">
                   Where
@@ -122,7 +118,6 @@ watch(columnVisibility, () => {
                 <div class="min-w-16 " v-else />
               </div>
 
-              <!-- Segunda Parte do Filtro -->
               <div>
                 <Select v-model="filter.column">
                   <SelectTrigger>
@@ -135,7 +130,6 @@ watch(columnVisibility, () => {
                       :value="columnOperator.id" 
                       class="capitalize"
                       >
-                      <!-- :class="`${columnOperator.getCanFilter() ? '' : 'hidden'}`" -->
                     <FlexRender
                       :render="columnOperator.header" 
                     />
@@ -144,7 +138,6 @@ watch(columnVisibility, () => {
                 </Select>
               </div>
 
-              <!-- Terceira Parte do Filtro -->
               <div>
                 <Select v-model="filter.operator">
                   <SelectTrigger>
@@ -163,7 +156,6 @@ watch(columnVisibility, () => {
                 </Select>
               </div>
 
-              <!-- Quarta Parte do Filtro -->
               <div class="min-w-28">
                 <Input
                   v-model="filter.value"
@@ -172,7 +164,6 @@ watch(columnVisibility, () => {
                 />
               </div>
 
-              <!-- Quinta Parte do Filtro -->
                <div>
                 <Button 
                   variant="destructive"
