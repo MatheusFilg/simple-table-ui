@@ -11,7 +11,7 @@ import type { User } from '@/types/users'
 
 export const users = ref<User[]>([])
 export const pagination = ref<PaginationState>({
-  pageIndex: 0,
+  pageIndex: 1,
   pageSize: 25,
 })
 
@@ -55,7 +55,7 @@ export const table = useVueTable({
   columns,
   getCoreRowModel: getCoreRowModel(),
   // valor fixo pois ñ tem o total de itens
-  pageCount: 10,
+  pageCount: -1,
   manualFiltering: true,
   manualSorting: true,
   manualPagination: true,
@@ -87,14 +87,4 @@ export const table = useVueTable({
         )
       : setPagination(updater)
   },
-  //Ambas funções abaixas nao estao sendo chamadas
-
-  // onColumnFiltersChange: updater => {
-  //   columnFilters.value =
-  //     typeof updater === 'function' ? updater(columnFilters.value) : updater
-  // },
-  // onColumnVisibilityChange: updater => {
-  //   columnVisibility.value =
-  //     typeof updater === 'function' ? updater(columnVisibility.value) : updater
-  // },
 })

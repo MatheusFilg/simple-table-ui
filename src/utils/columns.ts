@@ -2,7 +2,6 @@ import type { User } from '../types/users'
 import type { ColumnDef } from '@tanstack/vue-table'
 import dayjs from 'dayjs'
 import ptBR from 'dayjs/locale/pt-br'
-import { CircleCheck, CircleX } from 'lucide-vue-next'
 import { h } from 'vue'
 
 dayjs.locale(ptBR)

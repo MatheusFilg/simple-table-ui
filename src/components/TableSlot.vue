@@ -7,7 +7,6 @@ import { ref, watchEffect } from 'vue'
 import { pagination, sorting, table, users } from '../utils/table'
 import AdvancedFilter, { type FilterItem } from './AdvancedFilter.vue'
 import ColumnVisibility from './ColumnVisibility.vue'
-import DateRangeFilter from './DateRangeFilter.vue'
 import Pagination from './Pagination.vue'
 import {
   Table,
@@ -32,12 +31,18 @@ function handleFilterUpdate({ filters, where }: { filters: FilterItem[]; where: 
 const { result, error } = useQuery<{ userTable: User[] }>(
   queryAllUsers,
   () => ({
-    offset: pagination.value.pageIndex * pagination.value.pageSize,
+    offset: (pagination.value.pageIndex -1) * pagination.value.pageSize,
     limit: pagination.value.pageSize,
-    orderBy: sorting.value.length > 0 ? {
-      field: sorting.value[0].id,
-      direction: sorting.value[0].desc ? 'desc' : 'asc'
-    } : null,
+    orderBy: sorting.value.reduce(
+      (acc, sort, idx) => {
+        acc[sort.id] = {
+          direction: sort.desc ? 'desc' : 'asc',
+          priority: idx + 1,
+        }
+        return acc
+      },
+      {} as Record<string, { direction: 'asc' | 'desc'; priority: number }>
+    ),
     where: filterState.value.items.length > 0 ? filterState.value.where : {},
   }),
   {fetchPolicy: 'cache-first'}
@@ -53,7 +58,6 @@ watchEffect(() => {
 <template>
       <div class="flex flex-row w-full justify-between align-middle">
         <AdvancedFilter :initial-filters="filterState.items" @update:filters="handleFilterUpdate" />
-        <DateRangeFilter />
         <ColumnVisibility />
       </div>
       <div class="w-full overflow-auto border rounded h-[75vh] grid">
@@ -108,7 +112,7 @@ watchEffect(() => {
 
       <div class="flex justify-center mt-2">
         <div class="flex items-center justify-between w-full">
-          <p>Current Page: {{ pagination.pageIndex + 1 }} </p>
+          <!-- <p>Current Page: {{ pagination.pageIndex }} </p> -->
           <Pagination/>
         </div>
       </div>
