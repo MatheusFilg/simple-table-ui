@@ -7,6 +7,8 @@ query getAllUsers($offset: Int, $limit: Int, $orderBy: UserTableOrderBy, $where:
     firstName
     lastName
     email
+    contact
+    profession
   }
 }
 `)

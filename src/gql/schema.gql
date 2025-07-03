@@ -29,6 +29,45 @@ type Query {
   userTableSingle(offset: Int, orderBy: UserTableOrderBy, where: UserTableFilters): UserTableSelectItem
 }
 
+input UserTableContactFilters {
+  OR: [UserTableContactfiltersOr!]
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableContactfiltersOr {
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
 input UserTableEmailFilters {
   OR: [UserTableEmailfiltersOr!]
   eq: String
@@ -70,17 +109,21 @@ input UserTableEmailfiltersOr {
 
 input UserTableFilters {
   OR: [UserTableFiltersOr!]
+  contact: UserTableContactFilters
   email: UserTableEmailFilters
   firstName: UserTableFirstNameFilters
   id: UserTableIdFilters
   lastName: UserTableLastNameFilters
+  profession: UserTableProfessionFilters
 }
 
 input UserTableFiltersOr {
+  contact: UserTableContactFilters
   email: UserTableEmailFilters
   firstName: UserTableFirstNameFilters
   id: UserTableIdFilters
   lastName: UserTableLastNameFilters
+  profession: UserTableProfessionFilters
 }
 
 input UserTableFirstNameFilters {
@@ -162,17 +205,21 @@ input UserTableIdfiltersOr {
 }
 
 input UserTableInsertInput {
+  contact: String!
   email: String!
   firstName: String!
   id: String
   lastName: String!
+  profession: String!
 }
 
 type UserTableItem {
+  contact: String!
   email: String!
   firstName: String!
   id: String!
   lastName: String!
+  profession: String!
 }
 
 input UserTableLastNameFilters {
@@ -215,22 +262,67 @@ input UserTableLastNamefiltersOr {
 }
 
 input UserTableOrderBy {
+  contact: InnerOrder
   email: InnerOrder
   firstName: InnerOrder
   id: InnerOrder
   lastName: InnerOrder
+  profession: InnerOrder
+}
+
+input UserTableProfessionFilters {
+  OR: [UserTableProfessionfiltersOr!]
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
+}
+
+input UserTableProfessionfiltersOr {
+  eq: String
+  gt: String
+  gte: String
+  ilike: String
+  """Array<undefined>"""
+  inArray: [String!]
+  isNotNull: Boolean
+  isNull: Boolean
+  like: String
+  lt: String
+  lte: String
+  ne: String
+  notIlike: String
+  """Array<undefined>"""
+  notInArray: [String!]
+  notLike: String
 }
 
 type UserTableSelectItem {
+  contact: String!
   email: String!
   firstName: String!
   id: String!
   lastName: String!
+  profession: String!
 }
 
 input UserTableUpdateInput {
+  contact: String
   email: String
   firstName: String
   id: String
   lastName: String
+  profession: String
 }

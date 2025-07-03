@@ -31,7 +31,7 @@ const operators = ref([
     { index: 4, label: "Is not", value: "ne" as const },
 ])
 
-const columnOptions = ref<{ id: string; header: ColumnDefTemplate<HeaderContext<{ id: number; email: string; firstName: string; lastName: string; }, unknown>> | undefined; }[]>([])
+const columnOptions = ref<{ id: string; header: ColumnDefTemplate<HeaderContext<{ id: number; email: string; firstName: string; lastName: string; contact: string, profession: string }, unknown>> | undefined; }[]>([])
 
 function addFilter() {
   filterItems.value.push({
